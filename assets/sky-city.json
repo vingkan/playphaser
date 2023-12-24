@@ -117,7 +117,7 @@
         {
          "columns":45,
          "firstgid":1,
-         "image":"cloud_tileset.png",
+         "image":"clouds/tileset-clouds.png",
          "imageheight":448,
          "imagewidth":720,
          "margin":0,

@@ -179,7 +179,7 @@
         {
          "columns":16,
          "firstgid":1,
-         "image":"forest\/tileset_grass.png",
+         "image":"forest\/tileset-grass.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,
@@ -257,7 +257,7 @@
         {
          "columns":16,
          "firstgid":5377,
-         "image":"forest\/tileset_stone.png",
+         "image":"forest\/tileset-stone.png",
          "imageheight":256,
          "imagewidth":256,
          "margin":0,
@@ -270,7 +270,7 @@
         {
          "columns":32,
          "firstgid":5633,
-         "image":"forest\/tileset_wall.png",
+         "image":"forest\/tileset-wall.png",
          "imageheight":512,
          "imagewidth":512,
          "margin":0,
@@ -1831,7 +1831,7 @@
         {
          "columns":7,
          "firstgid":6657,
-         "image":"collisions.png",
+         "image":"common/collisions.png",
          "imageheight":112,
          "imagewidth":112,
          "margin":0,

@@ -18,7 +18,7 @@ type TileMap = {
 
 const PLAYER_ID = "player"
 const PLAYER_SCALE = 1.5
-const PLAYER_SPRITE_SHEET = "assets/characters.png"
+const PLAYER_SPRITE_SHEET = "assets/common/characters.png"
 // Index in the sprite sheet file, left to right, top to bottom, zero-indexed.
 const PLAYER_SPRITE_INDEX = 7
 const PLAYER_SPRITE_SIZE = {
@@ -178,7 +178,7 @@ export class SkyCityScene extends GameScene {
       tileMap: {
         path: "assets/sky-city.json",
         tileSets: [
-          { name: "Cloud City", path: "assets/cloud_tileset.png" },
+          { name: "Cloud City", path: "assets/clouds/tileset-clouds.png" },
         ]
       },
       startPosition: { x: 10, y: 14 },
@@ -203,11 +203,11 @@ export class ForestTempleScene extends GameScene {
       tileMap: {
         path: "assets/forest-temple.json",
         tileSets: [
-          { name: "Grass", path: "assets/forest/tileset_grass.png" },
-          { name: "Wall", path: "assets/forest/tileset_wall.png" },
+          { name: "Grass", path: "assets/forest/tileset-grass.png" },
+          { name: "Wall", path: "assets/forest/tileset-wall.png" },
           { name: "Structures", path: "assets/forest/structures.png" },
           { name: "Props", path: "assets/forest/props.png" },
-          { name: "Collisions", path: "assets/collisions.png" },
+          { name: "Collisions", path: "assets/common/collisions.png" },
         ]
       },
       startPosition: { x: 9, y: 17 },
