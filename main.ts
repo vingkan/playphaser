@@ -91,7 +91,10 @@ export class GameScene extends Phaser.Scene {
       ],
     }
     this.gridEngine.create(tileMap, gridEngineConfig)
+    this.createThen()
   }
+
+  createThen() {}
 
   public update() {
     const cursors = this.input.keyboard.createCursorKeys()
@@ -151,7 +154,7 @@ function interactIfNotStarted(doInteract: Interaction): Interaction {
 }
 
 async function readTablet(scene: Phaser.Scene): Promise<void> {
-  const text = showText(scene, 11, 13, "You would go behind\nmy back?")
+  const text = showText(scene, 11, 13, "You would stab\nmy back?")
   await sleep(3000)
   text.destroy()
 }
@@ -178,10 +181,11 @@ export class SkyCityScene extends GameScene {
       tileMap: {
         path: "assets/sky-city.json",
         tileSets: [
+          { name: "Collisions", path: "assets/common/collisions.png" },
           { name: "Cloud City", path: "assets/clouds/tileset-clouds.png" },
         ]
       },
-      startPosition: { x: 10, y: 14 },
+      startPosition: { x: 9, y: 15 },
       sceneInteractionMap: {
         [Facing(9, 13, 'up')]: doReadTablet,
         [Facing(10, 13, 'up')]: doReadTablet,
@@ -194,6 +198,11 @@ export class SkyCityScene extends GameScene {
       },
     })
   }
+
+  createThen() {
+    const scene = this
+    showText(scene, 6, 16, "Press space to interact with things.")
+  }
 }
 
 export class ForestTempleScene extends GameScene {
@@ -203,11 +212,11 @@ export class ForestTempleScene extends GameScene {
       tileMap: {
         path: "assets/forest-temple.json",
         tileSets: [
+          { name: "Collisions", path: "assets/common/collisions.png" },
           { name: "Grass", path: "assets/forest/tileset-grass.png" },
           { name: "Wall", path: "assets/forest/tileset-wall.png" },
           { name: "Structures", path: "assets/forest/structures.png" },
           { name: "Props", path: "assets/forest/props.png" },
-          { name: "Collisions", path: "assets/common/collisions.png" },
         ]
       },
       startPosition: { x: 9, y: 17 },
