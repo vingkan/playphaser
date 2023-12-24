@@ -1,4 +1,4 @@
-import { Direction, GridEngine } from "grid-engine"
+import { Direction, GridEngine, PhaserTile } from "grid-engine"
 import * as Phaser from "phaser"
 
 type PositionDict = { x: number, y: number }
@@ -18,7 +18,7 @@ type TileMap = {
 
 const PLAYER_ID = "player"
 const PLAYER_SCALE = 1.5
-const PLAYER_SPRITE_SHEET = "assets/common/characters.png"
+const PLAYER_SPRITE_SHEET = "assets/common/sprite-characters.png"
 // Index in the sprite sheet file, left to right, top to bottom, zero-indexed.
 const PLAYER_SPRITE_INDEX = 7
 const PLAYER_SPRITE_SIZE = {
@@ -36,6 +36,10 @@ const TEXT_PAD = 8
 
 function Facing(x: number, y: number, direction: FacingDirection): string {
   return `${x}_${y}_${direction}`
+}
+
+function tileToPixels(t: number): number {
+  return t * TILE_SIZE_SCALED
 }
 
 export class GameScene extends Phaser.Scene {
@@ -138,8 +142,8 @@ function showText(
   text: string,
   color: string
 ): Phaser.GameObjects.Text {
-  const tX = TEXT_PAD + (x * TILE_SIZE_SCALED)
-  const tY = TEXT_PAD + (y * TILE_SIZE_SCALED)
+  const tX = TEXT_PAD + tileToPixels(x)
+  const tY = TEXT_PAD + tileToPixels(y)
   const textObject = scene.add.text(tX, tY, text, {
     fontFamily: FONT,
     fontSize: TEXT_SIZE,
