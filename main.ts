@@ -31,7 +31,6 @@ const SCALE = 3
 const TILE_SIZE_SCALED = TILE_SIZE_PX * SCALE
 
 const FONT = "Caudex"
-const TEXT_COLOR = "#625E69"
 const TEXT_SIZE = 24
 const TEXT_PAD = 8
 
@@ -94,7 +93,7 @@ export class GameScene extends Phaser.Scene {
     this.createThen()
   }
 
-  createThen() {}
+  createThen() { }
 
   public update() {
     const cursors = this.input.keyboard.createCursorKeys()
@@ -132,13 +131,19 @@ export class GameScene extends Phaser.Scene {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
-function showText(scene: Phaser.Scene, x: number, y: number, text: string): Phaser.GameObjects.Text {
+function showText(
+  scene: Phaser.Scene,
+  x: number,
+  y: number,
+  text: string,
+  color: string
+): Phaser.GameObjects.Text {
   const tX = TEXT_PAD + (x * TILE_SIZE_SCALED)
   const tY = TEXT_PAD + (y * TILE_SIZE_SCALED)
   const textObject = scene.add.text(tX, tY, text, {
     fontFamily: FONT,
     fontSize: TEXT_SIZE,
-    color: TEXT_COLOR,
+    color: color,
   })
   return textObject
 }
@@ -154,25 +159,42 @@ function interactIfNotStarted(doInteract: Interaction): Interaction {
 }
 
 async function readTablet(scene: Phaser.Scene): Promise<void> {
-  const text = showText(scene, 11, 13, "You would stab\nmy back?")
+  const text = showText(scene, 11, 13, "You would stab\nmy back?", "#625E69")
   await sleep(3000)
   text.destroy()
 }
 
 async function speakStatue(scene: Phaser.Scene): Promise<void> {
-  const text = showText(scene, 11, 6, "I wake.")
+  const text = showText(scene, 11, 6, "I wake.", "#625E69")
   await sleep(3000)
   text.destroy()
 }
 
 async function goToForestTemple(scene: Phaser.Scene): Promise<void> {
+  scene.scene.pause()
+  const text = showText(scene, 12, 9, "You slipped\nand fell...", "#625E69")
+  await sleep(2000)
+  scene.scene.resume()
+  text.destroy()
   scene.scene.start("ForestTempleScene")
-  await sleep(1000)
+}
+
+async function readForestTablet(scene: Phaser.Scene): Promise<void> {
+  const text = showText(
+    scene,
+    11,
+    6,
+    "Light the torches to\nmatch the stones at the\nfoot of the temple.",
+    "#4F2912"
+  )
+  await sleep(3000)
+  text.destroy()
 }
 
 const doReadTablet = interactIfNotStarted(readTablet)
 const doSpeakStatue = interactIfNotStarted(speakStatue)
 const doGoToForestTemple = interactIfNotStarted(goToForestTemple)
+const doReadForestTablet = interactIfNotStarted(readForestTablet)
 
 export class SkyCityScene extends GameScene {
   constructor() {
@@ -189,19 +211,25 @@ export class SkyCityScene extends GameScene {
       sceneInteractionMap: {
         [Facing(9, 13, 'up')]: doReadTablet,
         [Facing(10, 13, 'up')]: doReadTablet,
+
         [Facing(9, 6, 'down')]: doSpeakStatue,
         [Facing(10, 6, 'down')]: doSpeakStatue,
-        [Facing(8, 10, 'up')]: doGoToForestTemple,
+
+        [Facing(9, 9, 'down')]: doGoToForestTemple,
+        [Facing(10, 9, 'down')]: doGoToForestTemple,
         [Facing(9, 10, 'up')]: doGoToForestTemple,
         [Facing(10, 10, 'up')]: doGoToForestTemple,
-        [Facing(10, 10, 'up')]: doGoToForestTemple,
+        [Facing(9, 9, 'right')]: doGoToForestTemple,
+        [Facing(9, 10, 'right')]: doGoToForestTemple,
+        [Facing(10, 9, 'left')]: doGoToForestTemple,
+        [Facing(10, 10, 'left')]: doGoToForestTemple,
       },
     })
   }
 
   createThen() {
     const scene = this
-    showText(scene, 6, 16, "Press space to interact with things.")
+    showText(scene, 6, 16, "Press space to interact with things.", "#625E69")
   }
 }
 
@@ -220,7 +248,10 @@ export class ForestTempleScene extends GameScene {
         ]
       },
       startPosition: { x: 9, y: 17 },
-      sceneInteractionMap: {},
+      sceneInteractionMap: {
+        [Facing(9, 7, 'up')]: doReadForestTablet,
+        [Facing(10, 7, 'up')]: doReadForestTablet,
+      },
     })
   }
 }
