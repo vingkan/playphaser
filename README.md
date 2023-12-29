@@ -14,13 +14,13 @@ npm install
 ### Run
 
 ```bash
-npm run serve
+npm run serve --game=setinstone
 ```
 
 ### Build
 
 ```bash
-npm run build
+npm run build --game=setinstone
 ```
 
 ## References

@@ -1,6 +1,6 @@
 export const PLAYER_ID = "player"
 export const PLAYER_SCALE = 1.5
-export const PLAYER_SPRITE_SHEET = "assets/common/sprite-characters.png"
+export const PLAYER_SPRITE_SHEET = "../assets/common/sprite-characters.png"
 // Index in the sprite sheet file, left to right, top to bottom, zero-indexed.
 export const PLAYER_SPRITE_INDEX = 7
 export const PLAYER_SPRITE_SIZE = {

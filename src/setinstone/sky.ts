@@ -35,13 +35,13 @@ export class SkyCityScene extends GameScene {
         super({
             key: "SkyCityScene",
             music: {
-                path: "assets/music/fantascape-looping.mp3",
+                path: "../assets/music/fantascape-looping.mp3",
             },
             tileMap: {
-                path: "assets/sky-city.json",
+                path: "../assets/sky-city.json",
                 tileSets: [
-                    { name: "Collisions", path: "assets/common/collisions.png" },
-                    { name: "Cloud City", path: "assets/clouds/tileset-clouds.png" },
+                    { name: "Collisions", path: "../assets/common/collisions.png" },
+                    { name: "Cloud City", path: "../assets/clouds/tileset-clouds.png" },
                 ]
             },
             startPosition: { x: 9, y: 15 },

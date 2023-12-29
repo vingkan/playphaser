@@ -36,16 +36,16 @@ export class ForestTempleScene extends GameScene {
         super({
             key: "ForestTempleScene",
             music: {
-                path: "assets/music/lost-jungle-looping.mp3",
+                path: "../assets/music/lost-jungle-looping.mp3",
             },
             tileMap: {
-                path: "assets/forest-temple.json",
+                path: "../assets/forest-temple.json",
                 tileSets: [
-                    { name: "Collisions", path: "assets/common/collisions.png" },
-                    { name: "Grass", path: "assets/forest/tileset-grass.png" },
-                    { name: "Wall", path: "assets/forest/tileset-wall.png" },
-                    { name: "Structures", path: "assets/forest/structures.png" },
-                    { name: "Props", path: "assets/forest/props.png" },
+                    { name: "Collisions", path: "../assets/common/collisions.png" },
+                    { name: "Grass", path: "../assets/forest/tileset-grass.png" },
+                    { name: "Wall", path: "../assets/forest/tileset-wall.png" },
+                    { name: "Structures", path: "../assets/forest/structures.png" },
+                    { name: "Props", path: "../assets/forest/props.png" },
                 ]
             },
             startPosition: { x: 9, y: 17 },

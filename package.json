@@ -4,8 +4,8 @@
   "description": "Grid Engine TypeScript Example",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "esbuild src/setinstone/game.ts --servedir=. --outfile=main.js --bundle --target=es2016",
-    "build": "esbuild src/setinstone/game.ts --outfile=main.js --bundle --target=es2016"
+    "serve": "esbuild src/$npm_config_game/game.ts --servedir=. --outfile=$npm_config_game/main.js --bundle --target=es2016",
+    "build": "esbuild src/$npm_config_game/game.ts --outfile=$npm_config_game/main.js --bundle --target=es2016"
   },
   "author": "Annoraaq",
   "license": "Apache-2.0",

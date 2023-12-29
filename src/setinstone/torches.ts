@@ -4,10 +4,10 @@ import { showText, sleep, tileToPixels } from "./utils"
 export class TorchesWrapper {
 
     SPRITE_ID = "fire"
-    SPRITE_PATH = "assets/forest/sprite-fire.png"
+    SPRITE_PATH = "../assets/forest/sprite-fire.png"
     ANIMATION_ID = "fire-animation"
     SPRITE_DEPTH = 3
-    SOUND_PATH = "assets/music/fire-big.mp3"
+    SOUND_PATH = "../assets/music/fire-big.mp3"
 
     SOUND_MIN_VOLUME = 0.5
     TORCHES_ANSWER: number[] = [4, 2, 3, 4]
