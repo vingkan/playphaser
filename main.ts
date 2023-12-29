@@ -1,4 +1,4 @@
-import { Direction, GridEngine, PhaserTile } from "grid-engine"
+import { Direction, GridEngine } from "grid-engine"
 import * as Phaser from "phaser"
 
 type PositionDict = { x: number, y: number }
@@ -98,6 +98,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   createThen() { }
+  preloadThen() { }
 
   public update() {
     const cursors = this.input.keyboard.createCursorKeys()
@@ -130,6 +131,8 @@ export class GameScene extends Phaser.Scene {
     scene.load.tilemapTiledJSON(tileData.path, tileData.path)
 
     scene.load.spritesheet(PLAYER_ID, PLAYER_SPRITE_SHEET, PLAYER_SPRITE_SIZE)
+
+    scene.preloadThen()
   }
 }
 
@@ -162,6 +165,126 @@ function interactIfNotStarted(doInteract: Interaction): Interaction {
   }
 }
 
+type Flames = Phaser.GameObjects.Sprite[]
+
+class TorchesWrapper {
+
+  SPRITE_ID = "fire"
+  SPRITE_PATH = "assets/forest/sprite-fire.png"
+  ANIMATION_ID = "fire-animation"
+  SPRITE_DEPTH = 3
+  TORCHES_ANSWER: number[] = [4, 2, 3, 4]
+
+  torches: Flames[] = []
+  torchFlameCounts: number[] = [0, 0, 0, 0]
+
+  successCallback: () => Promise<void> = async () => {}
+
+  preload(scene: Phaser.Scene) {
+    const wrapper = this
+    scene.load.spritesheet(wrapper.SPRITE_ID, wrapper.SPRITE_PATH, {
+      frameWidth: 24,
+      frameHeight: 24
+    })
+  }
+
+  create(scene: Phaser.Scene) {
+    const wrapper = this
+
+    wrapper.successCallback = async () => {
+      const text = showText(
+        scene,
+        11,
+        6,
+        "Return now,\nto the heavens.",
+        "#4F2912"
+      )
+      await sleep(3000)
+      text.destroy()
+      scene.scene.start("SkyCityScene")
+    }
+
+    const fireAnimation = {
+      key: wrapper.ANIMATION_ID,
+      frames: scene.anims.generateFrameNumbers(wrapper.SPRITE_ID, {
+        start: 0,
+        end: 6,
+        first: 0,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    }
+    scene.anims.create(fireAnimation)
+
+    const torchCords: PositionDict[][] = [
+      wrapper.getFireCoords(3.5, 2),
+      wrapper.getFireCoords(7.5, 2),
+      wrapper.getFireCoords(11.5, 2),
+      wrapper.getFireCoords(15.5, 2),
+    ]
+    for (const coords of torchCords) {
+      const flames: Phaser.GameObjects.Sprite[] = []
+      for (const {x, y} of coords) {
+        const fX = tileToPixels(x)
+        const fY = tileToPixels(y)
+        const fireSprite = scene.add.sprite(fX, fY, wrapper.SPRITE_ID)
+        fireSprite.setDepth(wrapper.SPRITE_DEPTH)
+        fireSprite.setVisible(false)
+        flames.push(fireSprite)
+      }
+      wrapper.torches.push(flames)
+    }
+  }
+
+  setTorch(index: number, flameCount: number) {
+    const wrapper = this
+    const flames: Flames = wrapper.torches?.[index] || []
+    for (let i = 0; i < flames.length; i++) {
+      const flame = flames[i]
+      const isVisible = (i + 1) <= flameCount
+      flame.setVisible(isVisible)
+      if (isVisible) {
+        flame.play(wrapper.ANIMATION_ID)
+      } else {
+        flame.stop()
+      }
+    }
+  }
+
+  incrementTorch(index: number) {
+    const wrapper = this
+    const torchFlameCounts = wrapper.torchFlameCounts
+    const size = torchFlameCounts.length
+    if (index < 0 || index >= size) return
+    torchFlameCounts[index] = (torchFlameCounts[index] + 1) % (size + 1)
+    wrapper.setTorch(index, torchFlameCounts[index])
+    wrapper.checkTorches()
+  }
+
+  checkTorches() {
+    const wrapper = this
+    const isCorrect = wrapper.torchFlameCounts.reduce((agg, val, i) => {
+      return agg && val === wrapper.TORCHES_ANSWER[i]
+    }, true)
+    if (isCorrect) {
+      wrapper.successCallback()
+    }
+  }
+
+  getFireCoords(x: number, y: number): PositionDict[] {
+    const leftPos = 0.25
+    const rightPos = 0.75
+    const topPos = 0.1
+    const bottomPos = 0.5
+    return [
+      {x: x + leftPos, y: y + topPos},
+      {x: x + rightPos, y: y + topPos},
+      {x: x + leftPos, y: y + bottomPos},
+      {x: x + rightPos, y: y + bottomPos},
+    ]
+  }
+}
+
 async function readTablet(scene: Phaser.Scene): Promise<void> {
   const text = showText(scene, 11, 13, "You would stab\nmy back?", "#625E69")
   await sleep(3000)
@@ -169,15 +292,18 @@ async function readTablet(scene: Phaser.Scene): Promise<void> {
 }
 
 async function speakStatue(scene: Phaser.Scene): Promise<void> {
-  const text = showText(scene, 11, 6, "I wake.", "#625E69")
-  await sleep(3000)
+  scene.scene.pause()
+  const text = showText(scene, 11, 6, "I banish you.", "#625E69")
+  await sleep(1500)
+  scene.scene.resume()
   text.destroy()
+  scene.scene.start("ForestTempleScene")
 }
 
 async function goToForestTemple(scene: Phaser.Scene): Promise<void> {
   scene.scene.pause()
   const text = showText(scene, 12, 9, "You slipped\nand fell...", "#625E69")
-  await sleep(2000)
+  await sleep(1500)
   scene.scene.resume()
   text.destroy()
   scene.scene.start("ForestTempleScene")
@@ -195,10 +321,21 @@ async function readForestTablet(scene: Phaser.Scene): Promise<void> {
   text.destroy()
 }
 
+async function incrementTorch(scene: Phaser.Scene, index: number): Promise<void> {
+  if (scene instanceof ForestTempleScene) {
+    scene.torches.incrementTorch(index)
+  }
+  await sleep(100)
+}
+
 const doReadTablet = interactIfNotStarted(readTablet)
 const doSpeakStatue = interactIfNotStarted(speakStatue)
 const doGoToForestTemple = interactIfNotStarted(goToForestTemple)
 const doReadForestTablet = interactIfNotStarted(readForestTablet)
+const doIncrementTorch0 = interactIfNotStarted((s) => incrementTorch(s, 0))
+const doIncrementTorch1 = interactIfNotStarted((s) => incrementTorch(s, 1))
+const doIncrementTorch2 = interactIfNotStarted((s) => incrementTorch(s, 2))
+const doIncrementTorch3 = interactIfNotStarted((s) => incrementTorch(s, 3))
 
 export class SkyCityScene extends GameScene {
   constructor() {
@@ -238,6 +375,9 @@ export class SkyCityScene extends GameScene {
 }
 
 export class ForestTempleScene extends GameScene {
+  
+  torches = new TorchesWrapper()
+
   constructor() {
     super({
       key: "ForestTempleScene",
@@ -255,8 +395,26 @@ export class ForestTempleScene extends GameScene {
       sceneInteractionMap: {
         [Facing(9, 7, 'up')]: doReadForestTablet,
         [Facing(10, 7, 'up')]: doReadForestTablet,
+        [Facing(3, 5, 'up')]: doIncrementTorch0,
+        [Facing(4, 5, 'up')]: doIncrementTorch0,
+        [Facing(7, 5, 'up')]: doIncrementTorch1,
+        [Facing(8, 5, 'up')]: doIncrementTorch1,
+        [Facing(11, 5, 'up')]: doIncrementTorch2,
+        [Facing(12, 5, 'up')]: doIncrementTorch2,
+        [Facing(15, 5, 'up')]: doIncrementTorch3,
+        [Facing(16, 5, 'up')]: doIncrementTorch3,
       },
     })
+  }
+
+  preloadThen() {
+    const scene = this
+    scene.torches.preload(scene)
+  }
+
+  createThen() {
+    const scene = this
+    scene.torches.create(scene)
   }
 }
 
