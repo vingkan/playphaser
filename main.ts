@@ -395,14 +395,42 @@ export class ForestTempleScene extends GameScene {
       sceneInteractionMap: {
         [Facing(9, 7, 'up')]: doReadForestTablet,
         [Facing(10, 7, 'up')]: doReadForestTablet,
+
         [Facing(3, 5, 'up')]: doIncrementTorch0,
         [Facing(4, 5, 'up')]: doIncrementTorch0,
+        [Facing(3, 4, 'right')]: doIncrementTorch0,
+        [Facing(3, 5, 'right')]: doIncrementTorch0,
+        [Facing(4, 4, 'left')]: doIncrementTorch0,
+        [Facing(4, 5, 'left')]: doIncrementTorch0,
+        [Facing(3, 4, 'down')]: doIncrementTorch0,
+        [Facing(4, 4, 'down')]: doIncrementTorch0,
+
         [Facing(7, 5, 'up')]: doIncrementTorch1,
         [Facing(8, 5, 'up')]: doIncrementTorch1,
+        [Facing(7, 4, 'right')]: doIncrementTorch1,
+        [Facing(7, 5, 'right')]: doIncrementTorch1,
+        [Facing(8, 4, 'left')]: doIncrementTorch1,
+        [Facing(8, 5, 'left')]: doIncrementTorch1,
+        [Facing(7, 4, 'down')]: doIncrementTorch1,
+        [Facing(8, 4, 'down')]: doIncrementTorch1,
+
         [Facing(11, 5, 'up')]: doIncrementTorch2,
         [Facing(12, 5, 'up')]: doIncrementTorch2,
+        [Facing(11, 4, 'right')]: doIncrementTorch2,
+        [Facing(11, 5, 'right')]: doIncrementTorch2,
+        [Facing(12, 4, 'left')]: doIncrementTorch2,
+        [Facing(12, 5, 'left')]: doIncrementTorch2,
+        [Facing(11, 4, 'down')]: doIncrementTorch2,
+        [Facing(12, 4, 'down')]: doIncrementTorch2,
+
         [Facing(15, 5, 'up')]: doIncrementTorch3,
         [Facing(16, 5, 'up')]: doIncrementTorch3,
+        [Facing(15, 4, 'right')]: doIncrementTorch3,
+        [Facing(15, 5, 'right')]: doIncrementTorch3,
+        [Facing(16, 4, 'left')]: doIncrementTorch3,
+        [Facing(16, 5, 'left')]: doIncrementTorch3,
+        [Facing(15, 4, 'down')]: doIncrementTorch3,
+        [Facing(16, 4, 'down')]: doIncrementTorch3,
       },
     })
   }
@@ -423,12 +451,23 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
   render: {
     antialias: false,
   },
+  fps: {
+    smoothStep: false,
+  },
   type: Phaser.AUTO,
   scene: [SkyCityScene, ForestTempleScene],
   scale: {
-    width: 800,
-    height: 600,
+    mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
+    parent: "game",
+    min: {
+      width: 800,
+      height: 600,
+    },
+    max: {
+      width: 2400,
+      height: 1800,
+    }
   },
   plugins: {
     scene: [
