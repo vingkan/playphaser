@@ -1,6 +1,12 @@
 import { Direction, GridEngine } from "grid-engine"
 import * as Phaser from "phaser"
 
+type PhaserSound = (
+  Phaser.Sound.NoAudioSound
+  | Phaser.Sound.HTML5AudioSound
+  | Phaser.Sound.WebAudioSound
+)
+
 type PositionDict = { x: number, y: number }
 type FacingDirection = "up" | "down" | "left" | "right"
 
@@ -14,6 +20,9 @@ type TileSet = {
 type TileMap = {
   path: string,
   tileSets: TileSet[]
+}
+type MusicConfig = {
+  path: string
 }
 
 const PLAYER_ID = "player"
@@ -45,11 +54,13 @@ function tileToPixels(t: number): number {
 export class GameScene extends Phaser.Scene {
   private gridEngine!: GridEngine
   private tileMap!: TileMap
+  private music: MusicConfig
   private startPosition: PositionDict = { x: 0, y: 0 }
   private sceneInteractionMap: SceneInteractionMap = {}
 
   constructor(config: {
     key: string,
+    music: MusicConfig,
     tileMap: TileMap,
     startPosition: PositionDict,
     sceneInteractionMap: SceneInteractionMap
@@ -59,6 +70,7 @@ export class GameScene extends Phaser.Scene {
       active: false,
       visible: false,
     })
+    this.music = config.music
     this.tileMap = config.tileMap
     this.startPosition = config.startPosition
     this.sceneInteractionMap = config.sceneInteractionMap
@@ -94,6 +106,13 @@ export class GameScene extends Phaser.Scene {
       ],
     }
     this.gridEngine.create(tileMap, gridEngineConfig)
+
+    this.game.sound.removeAll()
+    const backgroundMusic = this.game.sound.add(this.music.path)
+    backgroundMusic.setLoop(true)
+    backgroundMusic.setVolume(0.5)
+    backgroundMusic.play()
+
     this.createThen()
   }
 
@@ -129,9 +148,8 @@ export class GameScene extends Phaser.Scene {
     const tileData = scene.tileMap
     tileData.tileSets.forEach((ts) => scene.load.image(ts.path, ts.path))
     scene.load.tilemapTiledJSON(tileData.path, tileData.path)
-
     scene.load.spritesheet(PLAYER_ID, PLAYER_SPRITE_SHEET, PLAYER_SPRITE_SIZE)
-
+    scene.load.audio(this.music.path, this.music.path)
     scene.preloadThen()
   }
 }
@@ -173,12 +191,16 @@ class TorchesWrapper {
   SPRITE_PATH = "assets/forest/sprite-fire.png"
   ANIMATION_ID = "fire-animation"
   SPRITE_DEPTH = 3
+  SOUND_PATH = "assets/music/fire-big.mp3"
+
+  SOUND_MIN_VOLUME = 0.5
   TORCHES_ANSWER: number[] = [4, 2, 3, 4]
 
   torches: Flames[] = []
   torchFlameCounts: number[] = [0, 0, 0, 0]
 
   successCallback: () => Promise<void> = async () => {}
+  fireMusic: PhaserSound
 
   preload(scene: Phaser.Scene) {
     const wrapper = this
@@ -186,6 +208,7 @@ class TorchesWrapper {
       frameWidth: 24,
       frameHeight: 24
     })
+    scene.load.audio(wrapper.SOUND_PATH, wrapper.SOUND_PATH)
   }
 
   create(scene: Phaser.Scene) {
@@ -214,6 +237,7 @@ class TorchesWrapper {
       frameRate: 10,
       repeat: -1,
     }
+    scene.anims.remove(wrapper.ANIMATION_ID)
     scene.anims.create(fireAnimation)
 
     const torchCords: PositionDict[][] = [
@@ -222,6 +246,7 @@ class TorchesWrapper {
       wrapper.getFireCoords(11.5, 2),
       wrapper.getFireCoords(15.5, 2),
     ]
+    const newTorches = []
     for (const coords of torchCords) {
       const flames: Phaser.GameObjects.Sprite[] = []
       for (const {x, y} of coords) {
@@ -232,8 +257,14 @@ class TorchesWrapper {
         fireSprite.setVisible(false)
         flames.push(fireSprite)
       }
-      wrapper.torches.push(flames)
+      newTorches.push(flames)
     }
+    wrapper.torches = newTorches
+    wrapper.torchFlameCounts = [0, 0, 0, 0]
+
+    const fireMusic = scene.game.sound.add(wrapper.SOUND_PATH)
+    fireMusic.setLoop(true)
+    wrapper.fireMusic = fireMusic
   }
 
   setTorch(index: number, flameCount: number) {
@@ -258,7 +289,24 @@ class TorchesWrapper {
     if (index < 0 || index >= size) return
     torchFlameCounts[index] = (torchFlameCounts[index] + 1) % (size + 1)
     wrapper.setTorch(index, torchFlameCounts[index])
+    wrapper.checkSound()
     wrapper.checkTorches()
+  }
+
+  checkSound() {
+    const wrapper = this
+    const sum = (agg: number, val: number) => (agg + val)
+    const lit = wrapper.torchFlameCounts.reduce(sum, 0)
+    const total = wrapper.TORCHES_ANSWER.reduce(sum, 0)
+    const fraction = lit / total
+    const minVol = wrapper.SOUND_MIN_VOLUME
+    const volume = Math.min((fraction * (1 - minVol)) + minVol, 1)
+    wrapper.fireMusic.setVolume(volume)
+    if (lit > 0) {
+      wrapper.fireMusic.play()
+    } else {
+      wrapper.fireMusic.pause()
+    }
   }
 
   checkTorches() {
@@ -341,6 +389,9 @@ export class SkyCityScene extends GameScene {
   constructor() {
     super({
       key: "SkyCityScene",
+      music: {
+        path: "assets/music/fantascape-looping.mp3",
+      },
       tileMap: {
         path: "assets/sky-city.json",
         tileSets: [
@@ -381,6 +432,9 @@ export class ForestTempleScene extends GameScene {
   constructor() {
     super({
       key: "ForestTempleScene",
+      music: {
+        path: "assets/music/lost-jungle-looping.mp3",
+      },
       tileMap: {
         path: "assets/forest-temple.json",
         tileSets: [

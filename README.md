@@ -31,3 +31,5 @@ npm run build
 - [Tiled Map Editor](https://thorbjorn.itch.io/tiled?ac=MbLnMaiNXvG) by [Thorbjørn](https://thorbjorn.itch.io/)
 - [Free Cloud City Tileset](https://finalbossblues.itch.io/cloud-city-tileset?ac=MbLnMaiNXvG) by [finalbossblues](https://finalbossblues.itch.io/)
 - [Free Pixel Art Top Down - Basic Tileset](https://cainos.itch.io/pixel-art-top-down-basic) by [Cainos](https://cainos.itch.io/)
+- [Music by Eric Matyas, soundimage.org](https://soundimage.org/)
+- [Sound Jay](https://www.soundjay.com/index.html)
