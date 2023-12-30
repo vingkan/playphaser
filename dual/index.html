@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dual Wield</title>
+    <link rel="stylesheet" href="../assets/styles/reset.css">
+    <style type="text/css">
+
+      @import url('https://fonts.googleapis.com/css2?family=Caudex&display=swap');
+
+      html {
+        font-size: 0;
+      }
+
+      body {
+        background: black;
+        overflow: hidden;
+      }
+
+      .cover {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: transparent;
+      }
+
+      .game {
+        display: inline-block;
+        width: 50vw;
+        height: 100vh;
+        background: black;
+        font-size: 12px;
+      }
+
+      .game iframe {
+        width: 100%;
+        height: 100%;
+      }
+
+      div#attribution {
+        position: fixed;
+        bottom: 0;
+        width: calc(100vw - 1em);
+        padding: 0.5em;
+        text-align: center;
+        color: white;
+      }
+
+      p {
+        font-family: "Caudex";
+        font-size: 12px;
+        line-height: 30px;
+        opacity: 0.65;
+      }
+
+      a {
+        color: white;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="cover"></div>
+    <div id="sea" class="game">
+      <iframe src="./sea.html"></iframe>
+    </div>
+    <div id="sand" class="game">
+      <iframe src="./sand.html"></iframe>
+    </div>
+    <div id="attribution">
+      <p>
+        <span>Tilesets by</span>
+        <a href="https://finalbossblues.itch.io/cloud-city-tileset?ac=MbLnMaiNXvG" target="_blank">finalbossblues</a>
+      </p>
+    </div>
+    <script type="text/javascript">
+
+      const seaEl = document.getElementById("sea")
+      const sandEl = document.getElementById("sand")
+      const seaFrame = seaEl.querySelector("iframe")
+      const sandFrame = sandEl.querySelector("iframe")
+
+      const ALLOWED_KEYS = {
+        "ArrowUp": "ArrowUp",
+        "ArrowDown": "ArrowDown",
+        "ArrowLeft": "ArrowLeft",
+        "ArrowRight": "ArrowRight",
+        "Space": "Space",
+      }
+      let pressedKey = null
+
+      function maybeSendNewKey(newKey) {
+        if (newKey === pressedKey) return
+        pressedKey = newKey
+        seaFrame.contentWindow.postMessage({ key: pressedKey })
+        sandFrame.contentWindow.postMessage({ key: pressedKey })
+      }
+
+      document.addEventListener("keydown", (e) => {
+        // e.preventDefault()
+        // e.stopPropagation()
+        const key = e.key
+        const newKey = ALLOWED_KEYS?.[key] || null
+        maybeSendNewKey(newKey)
+      })
+      document.addEventListener("keyup", (e) => {
+        const newKey = null
+        maybeSendNewKey(newKey)
+      })
+
+    </script>
+  </body>
+</html>
