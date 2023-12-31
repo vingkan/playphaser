@@ -5,6 +5,7 @@ import {
     PLAYER_SCALE,
     SCALE,
     PLAYER_SPRITE_VARIANTS,
+    CAMERA_Y_OFFSET,
     Facing,
 } from "./utils"
 
@@ -54,12 +55,11 @@ export class GameScene extends Phaser.Scene {
         })
 
         const playerSprite = this.add.sprite(0, 0, PLAYER_ID)
-        playerSprite.scale = PLAYER_SCALE
+        playerSprite.setScale(PLAYER_SCALE)
+
+        const cameraOffsetY = this.variant === "sand" ? -1 * playerSprite.height : CAMERA_Y_OFFSET
         this.cameras.main.startFollow(playerSprite, true)
-        this.cameras.main.setFollowOffset(
-            -playerSprite.width,
-            -playerSprite.height
-        )
+        this.cameras.main.setFollowOffset(-1 * playerSprite.width, cameraOffsetY)
 
         const spriteVariant = PLAYER_SPRITE_VARIANTS?.[this.variant]
         const gridEngineConfig = {

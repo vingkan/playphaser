@@ -7,7 +7,7 @@ export const PLAYER_SPRITE_VARIANTS = {
         path: "../assets/sea/sprite-god-mermaids.png",
         size: {
             frameWidth: 52,
-            frameHeight: 92,
+            frameHeight: 86,
         },
     },
     sand: {
@@ -19,6 +19,10 @@ export const PLAYER_SPRITE_VARIANTS = {
         },
     },
 }
+// Since the sea player sprite is taller than the sand player sprite and the
+// camera offset is based on the player sprite height, we use this magic number
+// to make the two camera views line up with each other.
+export const CAMERA_Y_OFFSET = -93
 
 export const TILE_SIZE_PX = 16
 export const SCALE = 3

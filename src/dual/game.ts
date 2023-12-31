@@ -24,7 +24,7 @@ function GameFactory(variant: string): GameVariant {
                     ]
                 },
                 startCharLayer: "Collisions",
-                startPosition: { x: 3, y: 18 },
+                startPosition: { x: 15, y: 10 },
                 sceneInteractionMap: {},
             })
         }
@@ -46,11 +46,6 @@ function GameFactory(variant: string): GameVariant {
         parent,
         type: Phaser.AUTO,
         scene: [SeaScene],
-        scale: {
-            mode: Phaser.Scale.FIT,
-            autoCenter: Phaser.Scale.CENTER_BOTH,
-            parent,
-        },
         render: {
             antialias: false,
         },
