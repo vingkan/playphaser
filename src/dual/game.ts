@@ -22,6 +22,7 @@ class SeaScene extends GameScene {
                 tileSets: [
                     { name: "Collisions", path: "../assets/common/collisions.png" },
                     { name: "Ground", path: `../assets/sea/ground-${variant}.png` },
+                    { name: "Props", path: `../assets/sea/props-${variant}.png` },
                 ]
             },
             startCharLayer: "Collisions",
@@ -29,8 +30,6 @@ class SeaScene extends GameScene {
             sceneInteractionMap: {},
         })
     }
-
-    public zoot() {}
 
     preloadThen() {
         const scene = this
