@@ -62,53 +62,14 @@
   </head>
   <body>
     <div class="cover"></div>
-    <div id="sea" class="game">
-      <iframe src="./sea.html"></iframe>
-    </div>
-    <div id="sand" class="game">
-      <iframe src="./sand.html"></iframe>
-    </div>
+    <div id="sea" class="game"></div>
+    <div id="sand" class="game"></div>
     <div id="attribution">
       <p>
         <span>Tilesets by</span>
         <a href="https://finalbossblues.itch.io/cloud-city-tileset?ac=MbLnMaiNXvG" target="_blank">finalbossblues</a>
       </p>
     </div>
-    <script type="text/javascript">
-
-      const seaEl = document.getElementById("sea")
-      const sandEl = document.getElementById("sand")
-      const seaFrame = seaEl.querySelector("iframe")
-      const sandFrame = sandEl.querySelector("iframe")
-
-      const ALLOWED_KEYS = {
-        "ArrowUp": "ArrowUp",
-        "ArrowDown": "ArrowDown",
-        "ArrowLeft": "ArrowLeft",
-        "ArrowRight": "ArrowRight",
-        "Space": "Space",
-      }
-      let pressedKey = null
-
-      function maybeSendNewKey(newKey) {
-        if (newKey === pressedKey) return
-        pressedKey = newKey
-        seaFrame.contentWindow.postMessage({ key: pressedKey })
-        sandFrame.contentWindow.postMessage({ key: pressedKey })
-      }
-
-      document.addEventListener("keydown", (e) => {
-        // e.preventDefault()
-        // e.stopPropagation()
-        const key = e.key
-        const newKey = ALLOWED_KEYS?.[key] || null
-        maybeSendNewKey(newKey)
-      })
-      document.addEventListener("keyup", (e) => {
-        const newKey = null
-        maybeSendNewKey(newKey)
-      })
-
-    </script>
+    <script src="main.js"></script>
   </body>
 </html>
