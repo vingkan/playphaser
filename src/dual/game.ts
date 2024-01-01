@@ -79,6 +79,11 @@ const ALLOWED_KEYS = {
     "ArrowLeft": "ArrowLeft",
     "ArrowRight": "ArrowRight",
     "Space": "Space",
+    "w": "ArrowUp",
+    "s": "ArrowDown",
+    "a": "ArrowLeft",
+    "d": "ArrowRight",
+    "x": "Space",
 }
 
 let pressedKey = null
