@@ -24,7 +24,7 @@ function GameFactory(variant: string): GameVariant {
                     ]
                 },
                 startCharLayer: "Collisions",
-                startPosition: { x: 15, y: 10 },
+                startPosition: { x: 12, y: 10 },
                 sceneInteractionMap: {},
             })
         }
@@ -40,10 +40,10 @@ function GameFactory(variant: string): GameVariant {
     }
 
     const title = `${variant[0].toUpperCase()}${variant.substring(1)}`
-    const parent = variant
+    const parentEl = document.getElementById(variant)
     const gameConfig: Phaser.Types.Core.GameConfig = {
         title,
-        parent,
+        parent: variant,
         type: Phaser.AUTO,
         scene: [SeaScene],
         render: {
@@ -51,6 +51,10 @@ function GameFactory(variant: string): GameVariant {
         },
         fps: {
             smoothStep: false,
+        },
+        scale: {
+            width: parentEl?.offsetWidth,
+            height: parentEl?.offsetHeight,
         },
         plugins: {
             scene: [
