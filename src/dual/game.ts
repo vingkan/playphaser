@@ -21,6 +21,7 @@ function GameFactory(variant: string): GameVariant {
                         { name: "Collisions", path: "../assets/common/collisions.png" },
                         { name: "Ground", path: `../assets/sea/ground-${variant}.png` },
                         { name: "Props", path: `../assets/sea/props-${variant}.png` },
+                        { name: "Stone", path: `../assets/sea/stone-${variant}.png` },
                     ]
                 },
                 startCharLayer: "Collisions",
