@@ -23,6 +23,17 @@ npm run serve --game=setinstone
 npm run build --game=setinstone
 ```
 
+## Tips and Tricks
+
+### Append Images
+
+```bash
+# Horizontally
+convert +append input1.png input2.png output.png
+# Vertically
+convert -append input1.png input2.png output.png
+```
+
 ## References
 
 - [Grid-Based Movement in a Top-Down 2D RPG With Phaser 3](https://medium.com/swlh/grid-based-movement-in-a-top-down-2d-rpg-with-phaser-3-e3a3486eb2fd) by @Annoraaq
