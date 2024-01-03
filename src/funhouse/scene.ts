@@ -1,4 +1,4 @@
-import { Direction, GridEngine, GridEngineConfig } from "grid-engine"
+import { Direction, GridEngine, GridEngineConfig, CharacterData } from "grid-engine"
 import * as Phaser from "phaser"
 import {
     PLAYER_ID,
@@ -67,7 +67,7 @@ export class GameScene extends Phaser.Scene {
         return tileMap
     }
 
-    getGridEngineConfig(startPosition: PositionDict): GridEngineConfig {
+    getGridEngineConfig(characterData): GridEngineConfig {
         const scene = this
         return {
             characters: [
@@ -75,8 +75,8 @@ export class GameScene extends Phaser.Scene {
                     id: PLAYER_ID,
                     sprite: scene.playerSprite,
                     walkingAnimationMapping: PLAYER_SPRITE_SETTINGS.index,
-                    startPosition,
                     charLayer: scene.startCharLayer,
+                    ...characterData
                 },
             ],
         }
@@ -111,11 +111,13 @@ export class GameScene extends Phaser.Scene {
             ],
             "onlyShowAdjacentMaps": false,
             "type": "world"
-        }
+        }        
         
         const tileMap = scene.createTileMap(scene.tiles.tileMaps[0], world.maps[0])
         scene.tileMap1 = scene.createTileMap(scene.tiles.tileMaps[1], world.maps[1])
-        scene.gridEngine.create(tileMap, scene.getGridEngineConfig(scene.startPosition))
+        scene.gridEngine.create(tileMap, scene.getGridEngineConfig({
+            startPosition: scene.startPosition
+        }))
 
         scene.game.sound.removeAll()
         if (scene.music) {
@@ -150,8 +152,17 @@ export class GameScene extends Phaser.Scene {
         const { x, y } = scene.gridEngine.getPosition(PLAYER_ID)
         const direction = scene.gridEngine.getFacingDirection(PLAYER_ID)
         if (x === 20 && y >= 10 && y <= 11 && direction == Direction.RIGHT) {
-            scene.gridEngine.create(scene.tileMap1, scene.getGridEngineConfig({ x: 0, y: y }))
-            
+            scene.gridEngine.create(scene.tileMap1, scene.getGridEngineConfig({
+                startPosition: { x: 0, y },
+                facingDirection: Direction.RIGHT,
+            }))
+            scene.createTileMap(scene.tiles.tileMaps[0], {
+                "fileName": "map/0.json",
+                "height": 352,
+                "width": 352,
+                "x": -336,
+                "y": 0
+            })
         }
 
         if (this.pressedKey === "Space") {
