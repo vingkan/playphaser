@@ -16,7 +16,7 @@ function GameFactory(variant: string): GameVariant {
                 key: `${variant}Scene`,
                 variant,
                 tileMap: {
-                    path: "../assets/dual.json",
+                    path: "../assets/atlantis.json",
                     tileSets: [
                         { name: "Collisions", path: "../assets/common/collisions.png" },
                         { name: "Ground", path: `../assets/sea/ground-${variant}.png` },
@@ -24,8 +24,8 @@ function GameFactory(variant: string): GameVariant {
                         { name: "Stone", path: `../assets/sea/stone-${variant}.png` },
                     ]
                 },
-                startCharLayer: "Collisions",
-                startPosition: { x: 12, y: 10 },
+                startCharLayer: "CityCollisions",
+                startPosition: { x: 149, y: 231 },
                 sceneInteractionMap: {},
             })
         }
@@ -37,6 +37,7 @@ function GameFactory(variant: string): GameVariant {
         createThen() {
             const scene = this
             setPressedKey = (key) => scene.setPressedKey(key)
+            console.log("Ready", variant)
         }
     }
 
