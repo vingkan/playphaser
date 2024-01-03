@@ -25,7 +25,7 @@ function GameFactory(variant: string): GameVariant {
                     ]
                 },
                 startCharLayer: "CityCollisions",
-                startPosition: { x: 149, y: 231 },
+                startPosition: { x: 2, y: 29 },
                 sceneInteractionMap: {},
             })
         }
@@ -37,7 +37,7 @@ function GameFactory(variant: string): GameVariant {
         createThen() {
             const scene = this
             setPressedKey = (key) => scene.setPressedKey(key)
-            console.log("Ready", variant)
+            console.log(`Ready: ${variant}`)
         }
     }
 
