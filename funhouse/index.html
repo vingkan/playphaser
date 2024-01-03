@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dual Wield</title>
+    <link rel="stylesheet" href="../assets/styles/reset.css">
+    <style type="text/css">
+
+      @import url('https://fonts.googleapis.com/css2?family=Caudex&display=swap');
+
+      html {
+        font-size: 0;
+      }
+
+      body {
+        background: black;
+        overflow: hidden;
+      }
+
+      .cover {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: transparent;
+      }
+
+      .game {
+        display: inline-block;
+        width: 100vw;
+        height: 100vh;
+        background: black;
+        font-size: 12px;
+      }
+
+      div#attribution {
+        position: fixed;
+        bottom: 0;
+        width: calc(100vw - 1em);
+        padding: 0.5em;
+        text-align: center;
+        color: white;
+      }
+
+      p {
+        font-family: "Caudex";
+        font-size: 12px;
+        line-height: 30px;
+        opacity: 0.65;
+      }
+
+      a {
+        color: white;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="cover"></div>
+    <div id="game" class="game"></div>
+    <div id="attribution">
+      <p>
+        <span>Tilesets by</span>
+        <a href="https://petricakegames.itch.io/mystic-chroma-dungeon-tileset" target="_blank">PetricakeGames</a>
+      </p>
+    </div>
+    <script src="main.js"></script>
+  </body>
+</html>
