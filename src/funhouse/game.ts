@@ -25,7 +25,7 @@ export class FunHouseScene extends GameScene {
                 pixelsPerTile: TILE_SIZE_PX,
             },
             startCharLayer: "Collisions",
-            startPosition: { x: 9, y: 10 },
+            startPosition: { x: 10, y: 11 },
             startMap: { x: 0, y: 0 },
             sceneInteractionMap: {},
         })
