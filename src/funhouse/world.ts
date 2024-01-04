@@ -1,23 +1,17 @@
 import { Direction, GridEngine, GridEngineConfig, CharacterData } from "grid-engine"
 import * as Phaser from "phaser"
-import {
-    PLAYER_ID,
-    PLAYER_SCALE,
-    SCALE,
-    PLAYER_SPRITE_SETTINGS,
-    Facing,
-} from "./utils"
 
-export class GameScene extends Phaser.Scene {
+export class WorldScene extends Phaser.Scene {
     gridEngine!: GridEngine
-    music?: MusicConfig
     world: WorldConfig
     tiles: TileConfig
-    startCharLayer: string
-    startPosition: PositionDict = { x: 0, y: 0 }
-    sceneInteractionMap: SceneInteractionMap = {}
+    start: StartConfig
+    player: PlayerConfig
+    music?: MusicConfig
+    
+    playerSprite!: Phaser.GameObjects.Sprite
+
     pressedKey: string | null = null
-    playerSprite: Phaser.GameObjects.Sprite
     currentMap: PositionDict
     currentTileMaps: Phaser.Tilemaps.Tilemap[] = []
 
@@ -26,10 +20,8 @@ export class GameScene extends Phaser.Scene {
         music?: MusicConfig,
         world: WorldConfig,
         tiles: TileConfig,
-        startCharLayer: string,
-        startPosition: PositionDict,
-        startMap: PositionDict,
-        sceneInteractionMap: SceneInteractionMap
+        start: StartConfig,
+        player: PlayerConfig,
     }) {
         super({
             key: config.key,
@@ -39,31 +31,9 @@ export class GameScene extends Phaser.Scene {
         this.music = config.music
         this.world = config.world
         this.tiles = config.tiles
-        this.startCharLayer = config.startCharLayer
-        this.startPosition = config.startPosition
-        this.currentMap = config.startMap
-        this.sceneInteractionMap = config.sceneInteractionMap
-    }
-
-    preload() {
-        const scene = this
-
-        scene.tiles.tileSets.forEach((ts) => scene.load.image(ts.path, ts.path))
-        for (let x = 0; x < scene.world.width; x++) {
-            for (let y = 0; y < scene.world.height; y++) {
-                const key = `${x}-${y}`
-                const path = `${scene.world.path}/${key}.json`
-                scene.load.tilemapTiledJSON(key, path)
-            }
-        }
-
-        scene.load.spritesheet(PLAYER_ID, PLAYER_SPRITE_SETTINGS.path, PLAYER_SPRITE_SETTINGS.size)
-
-        if (scene.music) {
-            scene.load.audio(scene.music.path, scene.music.path)
-        }
-
-        scene.preloadThen()
+        this.start = config.start
+        this.player = config.player
+        this.currentMap = config.start.map
     }
 
     maybeCreateTileMap(x: number, y: number): Phaser.Tilemaps.Tilemap | null {
@@ -79,8 +49,8 @@ export class GameScene extends Phaser.Scene {
         tileMap.layers.forEach((layerData, i) => {
             const layer = tileMap.createLayer(i, tileSetNames, 0, 0)
             if (!layer) return
-            layer.scale = SCALE
-            const factor = SCALE * scene.world.pixelsPerTile
+            layer.scale = scene.world.scale
+            const factor = scene.world.scale * scene.world.pixelsPerTile
             const currX = scene.currentMap.x
             const currY = scene.currentMap.y
             const offsetX = factor * scene.world.tilesX * (x - currX)
@@ -108,57 +78,24 @@ export class GameScene extends Phaser.Scene {
 
     getGridEngineConfig(characterData: Partial<CharacterData>): GridEngineConfig {
         const scene = this
+        const player = scene.player
         return {
             characters: [
                 {
-                    id: PLAYER_ID,
+                    id: player.key,
                     sprite: scene.playerSprite,
-                    walkingAnimationMapping: PLAYER_SPRITE_SETTINGS.index,
-                    charLayer: scene.startCharLayer,
+                    walkingAnimationMapping: player.sprite.index,
+                    charLayer: scene.start.characterLayer,
                     ...characterData
                 },
             ],
         }
     }
 
-    create() {
-        const scene = this
-
-        const playerSprite = scene.add.sprite(0, 0, PLAYER_ID)
-        playerSprite.setScale(PLAYER_SCALE)
-        scene.playerSprite = playerSprite
-
-        scene.cameras.main.startFollow(playerSprite, true)
-        scene.cameras.main.setFollowOffset(-1 * playerSprite.width, -1 * playerSprite.height)
-
-        const tileMap = scene.maybeCreateTileMapsAround(scene.currentMap.x, scene.currentMap.y)
-        if (tileMap) {
-            scene.gridEngine.create(tileMap, scene.getGridEngineConfig({
-                startPosition: scene.startPosition
-            }))
-        }
-
-        scene.game.sound.removeAll()
-        if (scene.music) {
-            const backgroundMusic = scene.game.sound.add(scene.music.path)
-            backgroundMusic.setLoop(true)
-            backgroundMusic.setVolume(0.5)
-            backgroundMusic.play()
-        }
-
-        scene.createThen()
-    }
-
-    createThen() { }
-    preloadThen() { }
-
-    public setPressedKey(key: string | null) {
-        this.pressedKey = key
-    }
-
     updateWorldMap() {
         const scene = this
-        const { x, y } = scene.gridEngine.getPosition(PLAYER_ID)
+        const playerKey = scene.player.key
+        const { x, y } = scene.gridEngine.getPosition(playerKey)
         const isXMin = x === 0
         const isYMin = y === 0
         const isXMax = x === (scene.world.tilesX - 1)
@@ -166,7 +103,7 @@ export class GameScene extends Phaser.Scene {
         if (!isXMin && !isYMin && !isXMax && !isYMax) return
 
         const newPosition = { x, y }
-        const direction = scene.gridEngine.getFacingDirection(PLAYER_ID)
+        const direction = scene.gridEngine.getFacingDirection(playerKey)
         if (direction === Direction.LEFT && isXMin) {
             scene.currentMap = {
                 x: scene.currentMap.x - 1,
@@ -195,30 +132,104 @@ export class GameScene extends Phaser.Scene {
             return
         }
 
+        scene.createTiles(newPosition, direction)
+    }
+
+    preloadTiles() {
+        const scene = this
+        scene.tiles.tileSets.forEach((ts) => scene.load.image(ts.path, ts.path))
+        for (let x = 0; x < scene.world.width; x++) {
+            for (let y = 0; y < scene.world.height; y++) {
+                const key = `${x}-${y}`
+                const path = `${scene.world.path}/${key}.json`
+                scene.load.tilemapTiledJSON(key, path)
+            }
+        }
+    }
+
+    createTiles(position: PositionDict, direction?: Direction) {
+        const scene = this
         scene.currentTileMaps.forEach((tm) => tm.destroy())
         scene.currentTileMaps = []
         const tileMap = scene.maybeCreateTileMapsAround(scene.currentMap.x, scene.currentMap.y)
         if (!tileMap) return
         scene.gridEngine.create(tileMap, scene.getGridEngineConfig({
-            startPosition: newPosition,
+            startPosition: position,
             facingDirection: direction,
         }))
     }
 
+    preloadPlayer() {
+        const scene = this
+        const player = scene.player
+        scene.load.spritesheet(player.key, player.sprite.path, player.sprite.size)
+    }
+
+    createPlayer() {
+        const scene = this
+        const player = scene.player
+        const playerSprite = scene.add.sprite(0, 0, player.key)
+        playerSprite.setScale(player.scale)
+        scene.playerSprite = playerSprite
+
+        scene.cameras.main.startFollow(playerSprite, true)
+        scene.cameras.main.setFollowOffset(-1 * playerSprite.width, -1 * playerSprite.height)
+    }
+
+    preloadMusic() {
+        const scene = this
+        if (!scene.music) return
+        scene.load.audio(scene.music.path, scene.music.path)
+    }
+
+    createMusic() {
+        const scene = this
+        scene.game.sound.removeAll()
+        if (!scene.music) return
+        const backgroundMusic = scene.game.sound.add(scene.music.path)
+        backgroundMusic.setLoop(true)
+        backgroundMusic.setVolume(0.5)
+        backgroundMusic.play()
+    }
+
+    createThen() { }
+    preloadThen() { }
+
+    preload() {
+        const scene = this
+        scene.preloadTiles()
+        scene.preloadPlayer()
+        scene.preloadMusic()
+        scene.preloadThen()
+    }
+
+    create() {
+        const scene = this
+        scene.createPlayer()
+        scene.createTiles(scene.start.position)
+        scene.createMusic()
+        scene.createThen()
+    }
+
+    public setPressedKey(key: string | null) {
+        this.pressedKey = key
+    }
+
     public update() {
         const scene = this
+        const playerKey = scene.player.key
         let moved = false
         if (scene.pressedKey === "ArrowLeft") {
-            scene.gridEngine.move(PLAYER_ID, Direction.LEFT)
+            scene.gridEngine.move(playerKey, Direction.LEFT)
             moved = true
         } else if (scene.pressedKey === "ArrowRight") {
-            scene.gridEngine.move(PLAYER_ID, Direction.RIGHT)
+            scene.gridEngine.move(playerKey, Direction.RIGHT)
             moved = true
         } else if (scene.pressedKey === "ArrowUp") {
-            scene.gridEngine.move(PLAYER_ID, Direction.UP)
+            scene.gridEngine.move(playerKey, Direction.UP)
             moved = true
         } else if (scene.pressedKey === "ArrowDown") {
-            scene.gridEngine.move(PLAYER_ID, Direction.DOWN)
+            scene.gridEngine.move(playerKey, Direction.DOWN)
             moved = true
         } else {
             moved = false
@@ -229,13 +240,8 @@ export class GameScene extends Phaser.Scene {
         }
 
         if (scene.pressedKey === "Space") {
-            const dir = scene.gridEngine.getFacingDirection(PLAYER_ID)
-            const pos = scene.gridEngine.getFacingPosition(PLAYER_ID)
-            const facing = Facing(pos.x, pos.y, dir as FacingDirection)
-            const doInteract = scene.sceneInteractionMap?.[facing]
-            if (doInteract) {
-                doInteract(scene)
-            }
+            const dir = scene.gridEngine.getFacingDirection(playerKey)
+            const pos = scene.gridEngine.getFacingPosition(playerKey)
         }
     }
 }

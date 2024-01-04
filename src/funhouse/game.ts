@@ -1,11 +1,10 @@
 import { GridEngine } from "grid-engine"
 import * as Phaser from "phaser"
-import { GameScene } from "./scene"
-import { TILE_SIZE_PX } from "./utils"
+import { WorldScene } from "./world"
 
 let setPressedKey: (key: string | null) => void = () => {}
 
-export class FunHouseScene extends GameScene {
+export class FunHouseScene extends WorldScene {
     constructor() {
         super({
             key: "fun-house",
@@ -22,12 +21,26 @@ export class FunHouseScene extends GameScene {
                 tilesY: 22,
                 width: 4,
                 height: 4,
-                pixelsPerTile: TILE_SIZE_PX,
+                pixelsPerTile: 16,
+                scale: 3,
             },
-            startCharLayer: "Collisions",
-            startPosition: { x: 10, y: 11 },
-            startMap: { x: 0, y: 0 },
-            sceneInteractionMap: {},
+            start: {
+                map: { x: 0, y: 0 },
+                position: { x: 10, y: 11 },
+                characterLayer: "Collisions",
+            },
+            player: {
+                key: "player",
+                scale: 1.5,
+                sprite: {
+                    index: 0,
+                    path: "../assets/common/sprite-characters.png",
+                    size: {
+                        frameWidth: 52,
+                        frameHeight: 72,
+                    },
+                },
+            },
         })
     }
 

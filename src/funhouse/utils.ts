@@ -1,42 +1,24 @@
-export const PLAYER_ID = "player"
-export const PLAYER_SCALE = 1.5
-export const PLAYER_SPRITE_SETTINGS = {
-    // Index in the sprite sheet file, left to right, top to bottom, zero-indexed.
-    index: 0,
-    path: "../assets/common/sprite-characters.png",
-    size: {
-        frameWidth: 52,
-        frameHeight: 72,
-    },
-}
-
-export const TILE_SIZE_PX = 16
-export const SCALE = 3
-export const TILE_SIZE_SCALED = TILE_SIZE_PX * SCALE
 
 export const FONT = "Caudex"
 export const TEXT_SIZE = 24
 export const TEXT_PAD = 8
 
-export function Facing(x: number, y: number, direction: FacingDirection): string {
-    return `${x}_${y}_${direction}`
-}
-
-export function tileToPixels(t: number): number {
-    return t * TILE_SIZE_SCALED
+export function tileToPixels(t: number, world: WorldConfig): number {
+    return t * world.scale * world.pixelsPerTile
 }
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
 export function showText(
     scene: Phaser.Scene,
+    world: WorldConfig,
     x: number,
     y: number,
     text: string,
-    color: string
+    color: string,
 ): Phaser.GameObjects.Text {
-    const tX = TEXT_PAD + tileToPixels(x)
-    const tY = TEXT_PAD + tileToPixels(y)
+    const tX = TEXT_PAD + tileToPixels(x, world)
+    const tY = TEXT_PAD + tileToPixels(y, world)
     const textObject = scene.add.text(tX, tY, text, {
         fontFamily: FONT,
         fontSize: TEXT_SIZE,
