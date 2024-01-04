@@ -1,26 +1,32 @@
 import { GridEngine } from "grid-engine"
 import * as Phaser from "phaser"
 import { GameScene } from "./scene"
-
+import { TILE_SIZE_PX } from "./utils"
 
 let setPressedKey: (key: string | null) => void = () => {}
 
-class FunHouseScene extends GameScene {
+export class FunHouseScene extends GameScene {
     constructor() {
         super({
             key: "fun-house",
             tiles: {
-                tileMaps: [
-                    { path: "../assets/funhouse/map/0.json" },
-                    { path: "../assets/funhouse/map/1.json" },
-                ],
+                tileMaps: [],
                 tileSets: [
                     { name: "Collisions", path: "../assets/common/collisions.png" },
                     { name: "Basics", path: "../assets/funhouse/mystic-chroma-basics.png" },
                 ],
             },
+            world: {
+                path: "../assets/funhouse/map",
+                tilesX: 22,
+                tilesY: 22,
+                width: 4,
+                height: 4,
+                pixelsPerTile: TILE_SIZE_PX,
+            },
             startCharLayer: "Collisions",
             startPosition: { x: 9, y: 10 },
+            startMap: { x: 0, y: 0 },
             sceneInteractionMap: {},
         })
     }

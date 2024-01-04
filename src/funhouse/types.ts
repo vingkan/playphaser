@@ -25,17 +25,24 @@ type MusicConfig = {
     path: string
 }
 
-type MapConfig =  {
+type WorldConfig = {
+    path: string,
+    tilesX: number,
+    tilesY: number,
+    width: number,
+    height: number,
+    pixelsPerTile: number
+}
+
+type WorldMap = {
     fileName: string,
     height: number,
     width: number,
     x: number,
-    y: number
+    y: number,
 }
-type WorldConfig = {
-    maps: MapConfig[]
+type WorldFile = {
+    maps: WorldMap[],
     onlyShowAdjacentMaps: boolean,
     type: string
 }
-
-type Flames = Phaser.GameObjects.Sprite[]

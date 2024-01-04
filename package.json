@@ -5,7 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "serve": "esbuild src/$npm_config_game/game.ts --servedir=. --outfile=$npm_config_game/main.js --bundle --target=es2016",
-    "build": "esbuild src/$npm_config_game/game.ts --outfile=$npm_config_game/main.js --bundle --target=es2016"
+    "build": "esbuild src/$npm_config_game/game.ts --outfile=$npm_config_game/main.js --bundle --target=es2016",
+    "generate": "node src/$npm_config_game/generate.js"
   },
   "author": "Annoraaq",
   "license": "Apache-2.0",
