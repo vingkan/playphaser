@@ -2,8 +2,8 @@ export const PLAYER_ID = "player"
 export const PLAYER_SCALE = 1.5
 export const PLAYER_SPRITE_SETTINGS = {
     // Index in the sprite sheet file, left to right, top to bottom, zero-indexed.
-    index: 2,
-    path: "../assets/sea/sprite-god-humans.png",
+    index: 0,
+    path: "../assets/common/sprite-characters.png",
     size: {
         frameWidth: 52,
         frameHeight: 72,
