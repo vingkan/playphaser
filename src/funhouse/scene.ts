@@ -196,6 +196,7 @@ export class GameScene extends Phaser.Scene {
         }
 
         scene.currentTileMaps.forEach((tm) => tm.destroy())
+        scene.currentTileMaps = []
         const tileMap = scene.maybeCreateTileMapsAround(scene.currentMap.x, scene.currentMap.y)
         if (!tileMap) return
         scene.gridEngine.create(tileMap, scene.getGridEngineConfig({
