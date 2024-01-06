@@ -7,8 +7,6 @@ export function tileToPixels(t: number, world: WorldConfig): number {
     return t * world.scale * world.pixelsPerTile
 }
 
-export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
-
 export function showText(
     scene: Phaser.Scene,
     world: WorldConfig,

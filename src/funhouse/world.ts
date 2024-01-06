@@ -1,6 +1,24 @@
 import { Direction, GridEngine, GridEngineConfig, CharacterData } from "grid-engine"
 import * as Phaser from "phaser"
 
+function hashCell(cell: Cell): string {
+    const { wx, wy, cx, cy } = cell
+    return `${wx}-${wy}-${cx}-${cy}`
+}
+
+function getInteractionMap(interactables: Interactable[]): InteractionMap {
+    return interactables.reduce((agg, val) => ({
+        ...agg,
+        ...val.cells.reduce((cellMap, cell) => ({
+            ...cellMap,
+            [hashCell(cell)]: val.action,
+        }), {})
+    }), {})
+}
+
+const SECOND_MS = 1000
+export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
 export class WorldScene extends Phaser.Scene {
     gridEngine: GridEngine
     tiles: TileConfig
@@ -8,8 +26,11 @@ export class WorldScene extends Phaser.Scene {
     world: WorldConfig
     start: StartConfig
     player: PlayerConfig
+    interactables: Interactable[]
     
     playerSprite: Phaser.GameObjects.Sprite
+    interactionMap: InteractionMap = {}
+    isInteracting: boolean = false
 
     pressedKey: string | null = null
     currentMap: PositionDict
@@ -23,18 +44,35 @@ export class WorldScene extends Phaser.Scene {
         world: WorldConfig,
         start: StartConfig,
         player: PlayerConfig,
+        interactables: Interactable[],
     }) {
         super({
             key: config.key,
             active: false,
             visible: false,
         })
+
         this.tiles = config.tiles
         this.music = config.music
         this.world = config.world
         this.start = config.start
         this.player = config.player
+        this.interactables = config.interactables
+
+        this.interactionMap = getInteractionMap(this.interactables)
         this.currentMap = config.start.map
+    }
+
+    async maybeDoActionAt(cell: Cell) {
+        const scene = this
+        const cellHash = hashCell(cell)
+        const doAction = scene.interactionMap?.[cellHash]
+        if (doAction && !scene.isInteracting) {
+            scene.isInteracting = true
+            await doAction(scene)
+            await sleep(SECOND_MS)
+            scene.isInteracting = false
+        }
     }
 
     maybeCreateTileMap(x: number, y: number): Phaser.Tilemaps.Tilemap | null {
@@ -187,9 +225,10 @@ export class WorldScene extends Phaser.Scene {
 
     changeBackgroundMusic(key: string, options: MusicOptions = {}) {
         const scene = this
+        const isOn = scene.music.on
         const isAlreadyPlaying = key === scene.currentBackgroundMusic
         const isValidSound = key in scene.music.sounds
-        if (isAlreadyPlaying || !isValidSound) return
+        if (!isOn || isAlreadyPlaying || !isValidSound) return
 
         scene.game.sound.removeAll()
         const sound = scene.game.sound.add(key)
@@ -249,8 +288,10 @@ export class WorldScene extends Phaser.Scene {
         }
 
         if (scene.pressedKey === "Space") {
-            const dir = scene.gridEngine.getFacingDirection(playerKey)
-            const pos = scene.gridEngine.getFacingPosition(playerKey)
+            const { x: wx, y: wy } = scene.currentMap
+            const { x: cx, y: cy } = scene.gridEngine.getFacingPosition(playerKey)
+            const cell = { wx, wy, cx, cy }
+            scene.maybeDoActionAt(cell)
         }
     }
 }

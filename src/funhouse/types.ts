@@ -8,6 +8,22 @@ type PositionDict = { x: number, y: number }
 
 type Interaction = (scene: Phaser.Scene) => Promise<void>
 
+type Cell = {
+    wx: number,
+    wy: number,
+    cx: number,
+    cy: number
+}
+
+type Interactable = {
+    cells: Cell[],
+    action: Interaction
+}
+
+type InteractionMap = {
+    [cellHash: string]: Interaction
+}
+
 type Tileset = {
     name: string,
     path: string
@@ -22,6 +38,7 @@ type Sound = {
 }
 
 type MusicConfig = {
+    on: boolean,
     sounds: {
         [key: string]: Sound
     }

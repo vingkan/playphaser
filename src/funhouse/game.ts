@@ -1,6 +1,37 @@
 import { GridEngine } from "grid-engine"
 import * as Phaser from "phaser"
 import { WorldScene } from "./world"
+import { makeNumberAt } from "./numbers"
+
+function makeInteractWithColumn(column: number) {
+    return async (scene: Phaser.Scene) => console.log(`This is column ${column}.`)
+}
+function makeInteractWithRow(row: number) {
+    return async (scene: Phaser.Scene) => console.log(`This is row ${row}.`)
+}
+
+const COLUMN_NUMBER_TOP_LEFT = { cx: 7, cy: 9 }
+const ROW_NUMBER_TOP_LEFT = { cx: 12, cy: 9 }
+const INDICES = [0, 1, 2, 3]
+const MAPS = (
+    INDICES
+        .map((wx) => INDICES.map((wy) => ({ wx, wy })))
+        .reduce((agg, arr) => ([ ...agg, ...arr]), [])
+)
+const interactables = (
+    MAPS
+        .map(({ wx, wy }) => ([
+            {
+                cells: makeNumberAt(wx, { wx, wy, ...COLUMN_NUMBER_TOP_LEFT, }),
+                action: makeInteractWithColumn(wx),
+            },
+            {
+                cells: makeNumberAt(wy, { wx, wy, ...ROW_NUMBER_TOP_LEFT, }),
+                action: makeInteractWithRow(wy),
+            },
+        ]))
+        .reduce((agg, arr) => ([ ...agg, ...arr]), [])
+)
 
 let setPressedKey: (key: string | null) => void = () => {}
 
@@ -15,6 +46,7 @@ export class FunHouseScene extends WorldScene {
                 ],
             },
             music: {
+                on: true,
                 sounds: {
                     pixelspies: { path: "../assets/music/pixel-spies-looping.mp3" },
                     technotronic: { path: "../assets/music/technotronic.mp3" },
@@ -46,6 +78,7 @@ export class FunHouseScene extends WorldScene {
                     },
                 },
             },
+            interactables,
         })
     }
 
@@ -103,7 +136,7 @@ const ALLOWED_KEYS = {
     "ArrowDown": "ArrowDown",
     "ArrowLeft": "ArrowLeft",
     "ArrowRight": "ArrowRight",
-    "Space": "Space",
+    " ": "Space",
     "w": "ArrowUp",
     "s": "ArrowDown",
     "a": "ArrowLeft",
