@@ -2,24 +2,25 @@ import { Direction, GridEngine, GridEngineConfig, CharacterData } from "grid-eng
 import * as Phaser from "phaser"
 
 export class WorldScene extends Phaser.Scene {
-    gridEngine!: GridEngine
-    world: WorldConfig
+    gridEngine: GridEngine
     tiles: TileConfig
+    music: MusicConfig
+    world: WorldConfig
     start: StartConfig
     player: PlayerConfig
-    music?: MusicConfig
     
-    playerSprite!: Phaser.GameObjects.Sprite
+    playerSprite: Phaser.GameObjects.Sprite
 
     pressedKey: string | null = null
     currentMap: PositionDict
     currentTileMaps: Phaser.Tilemaps.Tilemap[] = []
+    currentBackgroundMusic: string | null = null
 
     constructor(config: {
         key: string,
-        music?: MusicConfig,
-        world: WorldConfig,
         tiles: TileConfig,
+        music: MusicConfig,
+        world: WorldConfig,
         start: StartConfig,
         player: PlayerConfig,
     }) {
@@ -28,9 +29,9 @@ export class WorldScene extends Phaser.Scene {
             active: false,
             visible: false,
         })
+        this.tiles = config.tiles
         this.music = config.music
         this.world = config.world
-        this.tiles = config.tiles
         this.start = config.start
         this.player = config.player
         this.currentMap = config.start.map
@@ -44,8 +45,8 @@ export class WorldScene extends Phaser.Scene {
         
         const key = `${x}-${y}`
         const tileMap = scene.make.tilemap({ key })
-        const tileSetNames = scene.tiles.tileSets.map((ts) => ts.name)
-        scene.tiles.tileSets.forEach((ts) => tileMap.addTilesetImage(ts.name, ts.path))
+        const tileSetNames = scene.tiles.tilesets.map((ts) => ts.name)
+        scene.tiles.tilesets.forEach((ts) => tileMap.addTilesetImage(ts.name, ts.path))
         tileMap.layers.forEach((layerData, i) => {
             const layer = tileMap.createLayer(i, tileSetNames, 0, 0)
             if (!layer) return
@@ -137,7 +138,7 @@ export class WorldScene extends Phaser.Scene {
 
     preloadTiles() {
         const scene = this
-        scene.tiles.tileSets.forEach((ts) => scene.load.image(ts.path, ts.path))
+        scene.tiles.tilesets.forEach((ts) => scene.load.image(ts.path, ts.path))
         for (let x = 0; x < scene.world.width; x++) {
             for (let y = 0; y < scene.world.height; y++) {
                 const key = `${x}-${y}`
@@ -157,6 +158,7 @@ export class WorldScene extends Phaser.Scene {
             startPosition: position,
             facingDirection: direction,
         }))
+        scene.updateWorldThen()
     }
 
     preloadPlayer() {
@@ -178,22 +180,30 @@ export class WorldScene extends Phaser.Scene {
 
     preloadMusic() {
         const scene = this
-        if (!scene.music) return
-        scene.load.audio(scene.music.path, scene.music.path)
+        for (const [ key, sound ] of Object.entries(scene.music.sounds)) {
+            scene.load.audio(key, sound.path)
+        }     
     }
 
-    createMusic() {
+    changeBackgroundMusic(key: string, options: MusicOptions = {}) {
         const scene = this
+        const isAlreadyPlaying = key === scene.currentBackgroundMusic
+        const isValidSound = key in scene.music.sounds
+        if (isAlreadyPlaying || !isValidSound) return
+
         scene.game.sound.removeAll()
-        if (!scene.music) return
-        const backgroundMusic = scene.game.sound.add(scene.music.path)
-        backgroundMusic.setLoop(true)
-        backgroundMusic.setVolume(0.5)
-        backgroundMusic.play()
+        const sound = scene.game.sound.add(key)
+        const loop = options?.loop || true
+        const volume = options?.volume || 0.5
+        sound.setLoop(loop)
+        sound.setVolume(volume)
+        sound.play()
+        scene.currentBackgroundMusic = key
     }
 
     createThen() { }
     preloadThen() { }
+    updateWorldThen() { }
 
     preload() {
         const scene = this
@@ -207,7 +217,6 @@ export class WorldScene extends Phaser.Scene {
         const scene = this
         scene.createPlayer()
         scene.createTiles(scene.start.position)
-        scene.createMusic()
         scene.createThen()
     }
 

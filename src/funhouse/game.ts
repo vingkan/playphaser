@@ -9,11 +9,16 @@ export class FunHouseScene extends WorldScene {
         super({
             key: "fun-house",
             tiles: {
-                tileMaps: [],
-                tileSets: [
+                tilesets: [
                     { name: "Collisions", path: "../assets/common/collisions.png" },
                     { name: "Basics", path: "../assets/funhouse/mystic-chroma-basics.png" },
                 ],
+            },
+            music: {
+                sounds: {
+                    pixelspies: { path: "../assets/music/pixel-spies-looping.mp3" },
+                    technotronic: { path: "../assets/music/technotronic.mp3" },
+                },
             },
             world: {
                 path: "../assets/funhouse/map",
@@ -51,6 +56,16 @@ export class FunHouseScene extends WorldScene {
     createThen() {
         const scene = this
         setPressedKey = (key) => scene.setPressedKey(key)
+    }
+
+    updateWorldThen() {
+        const scene = this
+        const { x, y } = scene.currentMap
+        if (y > 1) {
+            scene.changeBackgroundMusic("technotronic")
+        } else {
+            scene.changeBackgroundMusic("pixelspies")
+        }
     }
 }
 
