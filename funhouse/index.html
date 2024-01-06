@@ -53,11 +53,65 @@
         color: white;
       }
 
+      .text-wrapper {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        margin: 50px 0;
+        text-align: center;
+      }
+
+      .text-box {
+        display: inline-block;
+        box-sizing: border-box;
+        text-align: left;
+        width: 50vw;
+        padding: 20px;
+        border-style: solid;
+        border-color: #5DBCC5;
+        border-width: 5px;
+        border-radius: 10px;
+        background: white;
+        color: black;
+        font-family: "Fragment Mono";
+        font-size: 20px;
+        height: 80px;
+        line-height: 30px;
+        text-transform: uppercase;
+      }
+
+      .text-content {
+        overflow: hidden;
+        border-right: 3px solid #EC7160;
+        white-space: nowrap;
+        animation:
+          typing 2s steps(40, end),
+          blink-caret .75s step-end infinite;
+      }
+
+      /* https://css-tricks.com/snippets/css/typewriter-effect/ */
+      @keyframes typing {
+        from { width: 0 }
+        to { width: 100% }
+      }
+
+      @keyframes blink-caret {
+        from, to { border-color: transparent }
+        50% { border-color: #EC7160; }
+      }
+
     </style>
   </head>
   <body>
     <div class="cover"></div>
-    <div id="game" class="game"></div>
+    <div id="game" class="game">
+      <div class="text-wrapper">
+        <div class="text-box">
+          <div class="text-content">Hello. You found me.</div>
+        </div>
+      </div>
+    </div>
     <div id="attribution">
       <p>
         <span>Tilesets by</span>

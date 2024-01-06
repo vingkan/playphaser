@@ -1,13 +1,27 @@
 import { GridEngine } from "grid-engine"
 import * as Phaser from "phaser"
-import { WorldScene } from "./world"
+import { WorldScene, sleep } from "./world"
 import { makeNumberAt } from "./numbers"
 
+const parentEl: HTMLElement = document.getElementById("game")!
+const textWrapper: HTMLElement = parentEl.querySelector(".text-wrapper")!
+const textContent: HTMLElement = textWrapper.querySelector(".text-content")!
+
+async function showText(scene: Phaser.Scene, text: string, ms: number) {
+    if (!textWrapper || !textContent) return
+    scene.scene.pause()
+    textWrapper.style.display = "block"
+    textContent.innerText = text
+    await sleep(ms)
+    textWrapper.style.display = "none"
+    scene.scene.resume()
+}
+
 function makeInteractWithColumn(column: number) {
-    return async (scene: Phaser.Scene) => console.log(`This is column ${column}.`)
+    return async (scene: Phaser.Scene) => showText(scene, `This is column ${column}.`, 3000)
 }
 function makeInteractWithRow(row: number) {
-    return async (scene: Phaser.Scene) => console.log(`This is row ${row}.`)
+    return async (scene: Phaser.Scene) => showText(scene, `This is row ${row}.`, 3000)
 }
 
 const COLUMN_NUMBER_TOP_LEFT = { cx: 7, cy: 9 }
@@ -89,6 +103,7 @@ export class FunHouseScene extends WorldScene {
     createThen() {
         const scene = this
         setPressedKey = (key) => scene.setPressedKey(key)
+        showText(scene, "Press space or x to interact.", 5000)
     }
 
     updateWorldThen() {
@@ -102,7 +117,6 @@ export class FunHouseScene extends WorldScene {
     }
 }
 
-const parentEl = document.getElementById("game")
 const gameConfig: Phaser.Types.Core.GameConfig = {
     title: "Fun House",
     parent: "game",
