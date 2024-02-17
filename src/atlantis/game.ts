@@ -1,6 +1,6 @@
 import { GridEngine } from "grid-engine"
 import * as Phaser from "phaser"
-import { WorldScene } from "./world"
+import { WorldScene, sleep } from "./world"
 import { PLAYER_SPRITE_VARIANTS } from "./utils"
 
 type GameVariant = {
@@ -9,6 +9,21 @@ type GameVariant = {
 }
 
 function GameFactory(variant: string): GameVariant {
+
+    const parentEl: HTMLElement = document.getElementById(variant)!
+    const textWrapper: HTMLElement = parentEl.querySelector(".text-wrapper")!
+    const textContent: HTMLElement = textWrapper.querySelector(".text-content")!
+    
+    async function showText(scene: Phaser.Scene, text: string, ms: number) {
+        if (!textWrapper || !textContent) return
+        scene.scene.pause()
+        textWrapper.style.display = "block"
+        textContent.innerText = text
+        await sleep(ms)
+        textWrapper.style.display = "none"
+        scene.scene.resume()
+    }
+
     let setPressedKey: (key: string | null) => void = () => {}
 
     class SeaScene extends WorldScene {
@@ -59,11 +74,11 @@ function GameFactory(variant: string): GameVariant {
             const scene = this
             setPressedKey = (key) => scene.setPressedKey(key)
             console.log(`Ready: ${variant}`)
+            showText(scene, "Hello there.", 2000)
         }
     }
 
     const title = `${variant[0].toUpperCase()}${variant.substring(1)}`
-    const parentEl = document.getElementById(variant)
     const gameConfig: Phaser.Types.Core.GameConfig = {
         title,
         parent: variant,

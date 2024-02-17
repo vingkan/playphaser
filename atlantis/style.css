@@ -45,3 +45,59 @@ p {
 a {
   color: white;
 }
+
+.text-wrapper {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  width: 50vw;
+  margin: 50px 0;
+  text-align: center;
+}
+
+.text-box {
+  display: inline-block;
+  box-sizing: border-box;
+  text-align: left;
+  width: 75%;
+  max-width: 500px;
+  padding: 20px;
+  border-style: solid;
+  border-width: 5px;
+  border-radius: 10px;
+  background: white;
+  color: black;
+  font-family: "Fragment Mono";
+  font-size: 20px;
+  height: 80px;
+  line-height: 30px;
+  text-transform: uppercase;
+}
+
+#sea .text-box {
+  border-color: #84C2BD;
+}
+
+#sand .text-box {
+  border-color: #7DB8C3;
+}
+
+.text-content {
+  overflow: hidden;
+  border-right: 3px solid #7DB8C3;
+  white-space: nowrap;
+  animation:
+    typing 2s steps(40, end),
+    blink-caret .75s step-end infinite;
+}
+
+/* https://css-tricks.com/snippets/css/typewriter-effect/ */
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: #7DB8C3; }
+}
