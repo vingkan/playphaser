@@ -5,21 +5,92 @@ type PhaserSound = (
 )
 
 type PositionDict = { x: number, y: number }
-type FacingDirection = "up" | "down" | "left" | "right"
 
 type Interaction = (scene: Phaser.Scene) => Promise<void>
-type SceneInteractionMap = { [id: string]: Interaction }
 
-type TileSet = {
+type Cell = {
+    wx: number,
+    wy: number,
+    cx: number,
+    cy: number
+}
+
+type Interactable = {
+    cells: Cell[],
+    action: Interaction
+}
+
+type InteractionMap = {
+    [cellHash: string]: Interaction
+}
+
+type Tileset = {
     name: string,
     path: string
 }
-type TileMap = {
-    path: string,
-    tileSets: TileSet[]
+
+type TileConfig = {
+    tilesets: Tileset[]
 }
-type MusicConfig = {
+
+type Sound = {
     path: string
 }
 
-type Flames = Phaser.GameObjects.Sprite[]
+type MusicConfig = {
+    on: boolean,
+    sounds: {
+        [key: string]: Sound
+    }
+}
+
+type MusicOptions = {
+    loop?: boolean,
+    volume?: number
+}
+
+type SpriteConfig = {
+    // Index in the sprite sheet file, left to right, top to bottom, zero-indexed.
+    index: number,
+    path: string,
+    size: {
+        frameWidth: number,
+        frameHeight: number,
+    }
+}
+
+type PlayerConfig = {
+    key: string,
+    scale: number,
+    sprite: SpriteConfig
+}
+
+type StartConfig = {
+    map: PositionDict,
+    position: PositionDict,
+    characterLayer: string
+}
+
+type WorldConfig = {
+    path: string,
+    tilesX: number,
+    tilesY: number,
+    width: number,
+    height: number,
+    pixelsPerTile: number,
+    scale: number
+}
+
+type WorldMap = {
+    fileName: string,
+    height: number,
+    width: number,
+    x: number,
+    y: number,
+}
+
+type WorldFile = {
+    maps: WorldMap[],
+    onlyShowAdjacentMaps: boolean,
+    type: string
+}

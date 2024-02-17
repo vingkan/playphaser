@@ -1,6 +1,7 @@
 import { GridEngine } from "grid-engine"
 import * as Phaser from "phaser"
-import { GameScene } from "./scene"
+import { WorldScene } from "./world"
+import { PLAYER_SPRITE_VARIANTS } from "./utils"
 
 type GameVariant = {
     game: Phaser.Game,
@@ -10,23 +11,43 @@ type GameVariant = {
 function GameFactory(variant: string): GameVariant {
     let setPressedKey: (key: string | null) => void = () => {}
 
-    class SeaScene extends GameScene {
+    class SeaScene extends WorldScene {
         constructor() {
             super({
-                key: `${variant}Scene`,
+                key: variant,
                 variant,
-                tileMap: {
-                    path: "../assets/atlantis.json",
-                    tileSets: [
+                tiles: {
+                    tilesets: [
                         { name: "Collisions", path: "../assets/common/collisions.png" },
                         { name: "Ground", path: `../assets/sea/ground-${variant}.png` },
                         { name: "Props", path: `../assets/sea/props-${variant}.png` },
                         { name: "Stone", path: `../assets/sea/stone-${variant}.png` },
                     ]
                 },
-                startCharLayer: "Collisions",
-                startPosition: { x: 10, y: 10 },
-                sceneInteractionMap: {},
+                music: {
+                    on: false,
+                    sounds: {},
+                },
+                world: {
+                    path: "../assets/sea/map",
+                    tilesX: 20,
+                    tilesY: 20,
+                    width: 3, // 6
+                    height: 2, // 4
+                    pixelsPerTile: 16,
+                    scale: 3,
+                },
+                start: {
+                    map: { x: 2, y: 1 },
+                    position: { x: 10, y: 10 },
+                    characterLayer: "Collisions",
+                },
+                player: {
+                    key: "player",
+                    scale: 1.5,
+                    sprite: PLAYER_SPRITE_VARIANTS[variant],
+                },
+                interactables: [],
             })
         }
 

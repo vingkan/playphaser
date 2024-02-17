@@ -14,13 +14,19 @@ npm install
 ### Run
 
 ```bash
-npm run serve --game=setinstone
+npm run serve --game=atlantis
 ```
 
 ### Build
 
 ```bash
-npm run build --game=setinstone
+npm run build --game=atlantis
+```
+
+## Generate World Map Files
+
+```bash
+npm run generate --game=atlantis
 ```
 
 ## Tips and Tricks
