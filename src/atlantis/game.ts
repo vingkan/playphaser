@@ -24,8 +24,8 @@ function GameFactory(variant: string): GameVariant {
                         { name: "Stone", path: `../assets/sea/stone-${variant}.png` },
                     ]
                 },
-                startCharLayer: "CityCollisions",
-                startPosition: { x: 2, y: 29 },
+                startCharLayer: "Collisions",
+                startPosition: { x: 10, y: 10 },
                 sceneInteractionMap: {},
             })
         }
