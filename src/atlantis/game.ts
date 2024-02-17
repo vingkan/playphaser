@@ -1,7 +1,7 @@
 import { GridEngine } from "grid-engine"
 import * as Phaser from "phaser"
 import { WorldScene, sleep } from "./world"
-import { PLAYER_SPRITE_VARIANTS } from "./utils"
+import { PLAYER_SPRITE_VARIANTS, isSea } from "./utils"
 
 type GameVariant = {
     game: Phaser.Game,
@@ -23,6 +23,22 @@ function GameFactory(variant: string): GameVariant {
         textWrapper.style.display = "none"
         scene.scene.resume()
     }
+
+    const interactables: Interactable[] = [
+        {
+            cells: [
+                { wx: 2, wy: 1, cx: 5, cy: 11 },
+                { wx: 2, wy: 1, cx: 6, cy: 11 },
+                { wx: 2, wy: 1, cx: 13, cy: 11 },
+                { wx: 2, wy: 1, cx: 14, cy: 11 },
+            ],
+            action: (s) => showText(
+                s,
+                `The ${isSea(variant) ? "Bold" : "Sordid"} towers of Atlantis.`,
+                2000
+            )
+        }
+    ]
 
     let setPressedKey: (key: string | null) => void = () => {}
 
@@ -62,7 +78,7 @@ function GameFactory(variant: string): GameVariant {
                     scale: 1.5,
                     sprite: PLAYER_SPRITE_VARIANTS[variant],
                 },
-                interactables: [],
+                interactables,
             })
         }
 

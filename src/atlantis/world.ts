@@ -1,6 +1,6 @@
 import { Direction, GridEngine, GridEngineConfig, CharacterData } from "grid-engine"
 import * as Phaser from "phaser"
-import { CAMERA_Y_OFFSET } from "./utils"
+import { CAMERA_Y_OFFSET, isSea } from "./utils"
 
 function hashCell(cell: Cell): string {
     const { wx, wy, cx, cy } = cell
@@ -216,7 +216,9 @@ export class WorldScene extends Phaser.Scene {
         playerSprite.setScale(player.scale)
         scene.playerSprite = playerSprite
 
-        const cameraOffsetY = this.variant === "sand" ? -1 * playerSprite.height : CAMERA_Y_OFFSET
+        const cameraOffsetY = (
+            isSea(this.variant) ? CAMERA_Y_OFFSET : -1 * playerSprite.height
+        )
         this.cameras.main.startFollow(playerSprite, true)
         this.cameras.main.setFollowOffset(-1 * playerSprite.width, cameraOffsetY)
     }

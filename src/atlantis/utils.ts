@@ -32,6 +32,12 @@ export function tileToPixels(t: number, world: WorldConfig): number {
     return t * world.scale * world.pixelsPerTile
 }
 
+export const SEA = "sea"
+export const SAND = "sand"
+
+export const isSea = (variant: string): boolean => variant === SEA
+export const isSand = (variant: string): boolean => variant === SAND
+
 export function writeTextOnWorld(
     scene: Phaser.Scene,
     world: WorldConfig,
