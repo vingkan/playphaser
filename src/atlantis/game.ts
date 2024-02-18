@@ -99,6 +99,7 @@ function GameFactory(variant: string): GameVariant {
         title,
         parent: variant,
         type: Phaser.AUTO,
+        transparent: true,
         scene: [SeaScene],
         render: {
             antialias: false,
