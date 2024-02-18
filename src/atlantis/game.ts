@@ -27,10 +27,10 @@ function GameFactory(variant: string): GameVariant {
     const interactables: Interactable[] = [
         {
             cells: [
-                { wx: 2, wy: 1, cx: 5, cy: 11 },
-                { wx: 2, wy: 1, cx: 6, cy: 11 },
-                { wx: 2, wy: 1, cx: 13, cy: 11 },
-                { wx: 2, wy: 1, cx: 14, cy: 11 },
+                { wx: 3, wy: 2, cx: 5, cy: 11 },
+                { wx: 3, wy: 2, cx: 6, cy: 11 },
+                { wx: 3, wy: 2, cx: 13, cy: 11 },
+                { wx: 3, wy: 2, cx: 14, cy: 11 },
             ],
             action: (s) => showText(
                 s,
@@ -69,7 +69,7 @@ function GameFactory(variant: string): GameVariant {
                     scale: 3,
                 },
                 start: {
-                    map: { x: 2, y: 1 },
+                    map: { x: 3, y: 2 },
                     position: { x: 10, y: 10 },
                     characterLayer: "Collisions",
                 },
