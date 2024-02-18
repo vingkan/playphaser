@@ -28,8 +28,8 @@ function main() {
         path: "../assets/sea/map",
         tilesX: 20,
         tilesY: 20,
-        width: 6,
-        height: 4,
+        width: 7,
+        height: 5,
         pixelsPerTile: 16,
     }
     const parts = world.path.split("/")

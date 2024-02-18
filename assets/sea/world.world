@@ -29,6 +29,13 @@
             "y": 960
         },
         {
+            "fileName": "map/0-4.json",
+            "width": 320,
+            "height": 320,
+            "x": 0,
+            "y": 1280
+        },
+        {
             "fileName": "map/1-0.json",
             "width": 320,
             "height": 320,
@@ -55,6 +62,13 @@
             "height": 320,
             "x": 320,
             "y": 960
+        },
+        {
+            "fileName": "map/1-4.json",
+            "width": 320,
+            "height": 320,
+            "x": 320,
+            "y": 1280
         },
         {
             "fileName": "map/2-0.json",
@@ -85,6 +99,13 @@
             "y": 960
         },
         {
+            "fileName": "map/2-4.json",
+            "width": 320,
+            "height": 320,
+            "x": 640,
+            "y": 1280
+        },
+        {
             "fileName": "map/3-0.json",
             "width": 320,
             "height": 320,
@@ -111,6 +132,13 @@
             "height": 320,
             "x": 960,
             "y": 960
+        },
+        {
+            "fileName": "map/3-4.json",
+            "width": 320,
+            "height": 320,
+            "x": 960,
+            "y": 1280
         },
         {
             "fileName": "map/4-0.json",
@@ -141,6 +169,13 @@
             "y": 960
         },
         {
+            "fileName": "map/4-4.json",
+            "width": 320,
+            "height": 320,
+            "x": 1280,
+            "y": 1280
+        },
+        {
             "fileName": "map/5-0.json",
             "width": 320,
             "height": 320,
@@ -167,6 +202,48 @@
             "height": 320,
             "x": 1600,
             "y": 960
+        },
+        {
+            "fileName": "map/5-4.json",
+            "width": 320,
+            "height": 320,
+            "x": 1600,
+            "y": 1280
+        },
+        {
+            "fileName": "map/6-0.json",
+            "width": 320,
+            "height": 320,
+            "x": 1920,
+            "y": 0
+        },
+        {
+            "fileName": "map/6-1.json",
+            "width": 320,
+            "height": 320,
+            "x": 1920,
+            "y": 320
+        },
+        {
+            "fileName": "map/6-2.json",
+            "width": 320,
+            "height": 320,
+            "x": 1920,
+            "y": 640
+        },
+        {
+            "fileName": "map/6-3.json",
+            "width": 320,
+            "height": 320,
+            "x": 1920,
+            "y": 960
+        },
+        {
+            "fileName": "map/6-4.json",
+            "width": 320,
+            "height": 320,
+            "x": 1920,
+            "y": 1280
         }
     ],
     "onlyShowAdjacentMaps": false,

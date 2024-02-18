@@ -63,8 +63,8 @@ function GameFactory(variant: string): GameVariant {
                     path: "../assets/sea/map",
                     tilesX: 20,
                     tilesY: 20,
-                    width: 3, // 6
-                    height: 2, // 4
+                    width: 7,
+                    height: 5,
                     pixelsPerTile: 16,
                     scale: 3,
                 },
