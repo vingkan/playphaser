@@ -143,32 +143,39 @@ export class WorldScene extends Phaser.Scene {
         const isYMin = y === 0
         const isXMax = x === (scene.world.tilesX - 1)
         const isYMax = y === (scene.world.tilesY - 1)
+        // We have not reached any map boundary, so no need to update world map.
         if (!isXMin && !isYMin && !isXMax && !isYMax) return
+
+        const { x: wx, y: wy } = scene.currentMap
+        const isWorldXMin = wx === 0
+        const isWorldYMin = wy === 0
+        const isWorldXMax = wx === (scene.world.width - 1)
+        const isWorldYMax = wy === (scene.world.height - 1)
 
         const newPosition = { x, y }
         const direction = scene.gridEngine.getFacingDirection(playerKey)
-        if (direction === Direction.LEFT && isXMin) {
+        if (direction === Direction.LEFT && isXMin && !isWorldXMin) {
             scene.currentMap = {
-                x: scene.currentMap.x - 1,
-                y: scene.currentMap.y,
+                x: wx - 1,
+                y: wy,
             }
             newPosition.x = scene.world.tilesX
-        } else if (direction === Direction.RIGHT && isXMax) {
+        } else if (direction === Direction.RIGHT && isXMax && !isWorldXMax) {
             scene.currentMap = {
-                x: scene.currentMap.x + 1,
-                y: scene.currentMap.y,
+                x: wx + 1,
+                y: wy,
             }
             newPosition.x = -1
-        } else if (direction === Direction.UP && isYMin) {
+        } else if (direction === Direction.UP && isYMin && !isWorldYMin) {
             scene.currentMap = {
-                x: scene.currentMap.x,
-                y: scene.currentMap.y - 1,
+                x: wx,
+                y: wy - 1,
             }
             newPosition.y = scene.world.tilesY
-        } else if (direction === Direction.DOWN && isYMax) {
+        } else if (direction === Direction.DOWN && isYMax && !isWorldYMax) {
             scene.currentMap = {
-                x: scene.currentMap.x,
-                y: scene.currentMap.y + 1,
+                x: wx,
+                y: wy + 1,
             }
             newPosition.y = -1
         } else {
