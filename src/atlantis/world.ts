@@ -22,6 +22,11 @@ export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
 export class WorldScene extends Phaser.Scene {
     gridEngine: GridEngine
+
+    parentEl: HTMLElement
+    textWrapper: HTMLElement
+    textContent: HTMLElement
+
     variant: string
     tiles: TileConfig
     music: MusicConfig
@@ -41,6 +46,7 @@ export class WorldScene extends Phaser.Scene {
 
     constructor(config: {
         key: string,
+        parentEl: HTMLElement,
         variant: string,
         tiles: TileConfig,
         music: MusicConfig,
@@ -55,6 +61,7 @@ export class WorldScene extends Phaser.Scene {
             visible: false,
         })
 
+        this.parentEl = config.parentEl
         this.variant = config.variant
         this.tiles = config.tiles
         this.music = config.music
@@ -65,6 +72,14 @@ export class WorldScene extends Phaser.Scene {
 
         this.interactionMap = getInteractionMap(this.interactables)
         this.currentMap = config.start.map
+
+        this.textWrapper = this.parentEl.querySelector(".text-wrapper")!
+        this.textContent = this.textWrapper.querySelector(".text-content")!
+    }
+
+    switchText(seaText: string, sandText: string): string {
+        const scene = this
+        return isSea(this.variant) ? seaText : sandText
     }
 
     async maybeDoActionAt(cell: Cell) {
@@ -77,6 +92,17 @@ export class WorldScene extends Phaser.Scene {
             await sleep(SECOND_MS)
             scene.isInteracting = false
         }
+    }
+    
+    async showText(text: string, ms: number) {
+        const scene = this
+        if (!scene.textWrapper || !scene.textContent) return
+        scene.scene.pause()
+        scene.textWrapper.style.display = "block"
+        scene.textContent.innerText = text
+        await sleep(ms)
+        scene.textWrapper.style.display = "none"
+        scene.scene.resume()
     }
 
     maybeCreateTileMap(x: number, y: number): Phaser.Tilemaps.Tilemap | null {
@@ -183,6 +209,18 @@ export class WorldScene extends Phaser.Scene {
         }
 
         scene.createTiles(newPosition, direction)
+    }
+
+    async teleportTo(
+        wx: number,
+        wy: number,
+        x: number,
+        y: number,
+        direction: Direction
+    ) {
+        const scene = this
+        scene.currentMap = { x: wx, y: wy }
+        scene.createTiles({ x, y }, direction)
     }
 
     preloadTiles() {

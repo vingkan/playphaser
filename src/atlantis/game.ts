@@ -1,44 +1,20 @@
 import { GridEngine } from "grid-engine"
 import * as Phaser from "phaser"
-import { WorldScene, sleep } from "./world"
-import { PLAYER_SPRITE_VARIANTS, isSea } from "./utils"
+import { INTERACTABLES } from "./interactions"
+import { PLAYER_SPRITE_VARIANTS } from "./utils"
+import { WorldScene } from "./world"
 
 type GameVariant = {
     game: Phaser.Game,
     setPressedKey: (key: string | null) => void,
 }
 
+const GAME_VARIANTS = 2
+let ACTIVE_GAMES: { [variant: string]: boolean } = {}
+
 function GameFactory(variant: string): GameVariant {
 
     const parentEl: HTMLElement = document.getElementById(variant)!
-    const textWrapper: HTMLElement = parentEl.querySelector(".text-wrapper")!
-    const textContent: HTMLElement = textWrapper.querySelector(".text-content")!
-    
-    async function showText(scene: Phaser.Scene, text: string, ms: number) {
-        if (!textWrapper || !textContent) return
-        scene.scene.pause()
-        textWrapper.style.display = "block"
-        textContent.innerText = text
-        await sleep(ms)
-        textWrapper.style.display = "none"
-        scene.scene.resume()
-    }
-
-    const interactables: Interactable[] = [
-        {
-            cells: [
-                { wx: 3, wy: 2, cx: 5, cy: 11 },
-                { wx: 3, wy: 2, cx: 6, cy: 11 },
-                { wx: 3, wy: 2, cx: 13, cy: 11 },
-                { wx: 3, wy: 2, cx: 14, cy: 11 },
-            ],
-            action: (s) => showText(
-                s,
-                `The ${isSea(variant) ? "Bold" : "Sordid"} towers of Atlantis.`,
-                2000
-            )
-        }
-    ]
 
     let setPressedKey: (key: string | null) => void = () => {}
 
@@ -46,6 +22,7 @@ function GameFactory(variant: string): GameVariant {
         constructor() {
             super({
                 key: variant,
+                parentEl,
                 variant,
                 tiles: {
                     tilesets: [
@@ -80,7 +57,7 @@ function GameFactory(variant: string): GameVariant {
                     scale: 1.5,
                     sprite: PLAYER_SPRITE_VARIANTS[variant],
                 },
-                interactables,
+                interactables: INTERACTABLES,
             })
         }
 
@@ -91,8 +68,9 @@ function GameFactory(variant: string): GameVariant {
         createThen() {
             const scene = this
             setPressedKey = (key) => scene.setPressedKey(key)
+            ACTIVE_GAMES[variant] = true
             console.log(`Ready: ${variant}`)
-            showText(scene, "Hello there.", 2000)
+            scene.showText("Welcome to Atlantis.", 2000)
         }
     }
 
@@ -139,7 +117,7 @@ const ALLOWED_KEYS = {
     "ArrowDown": "ArrowDown",
     "ArrowLeft": "ArrowLeft",
     "ArrowRight": "ArrowRight",
-    "Space": "Space",
+    " ": "Space",
     "w": "ArrowUp",
     "s": "ArrowDown",
     "a": "ArrowLeft",
@@ -147,9 +125,11 @@ const ALLOWED_KEYS = {
     "x": "Space",
 }
 
-let pressedKey = null
+let pressedKey: string | null = null
 
-function maybeSendNewKey(newKey) {
+function maybeSendNewKey(newKey: string | null) {
+    // Wait for both games to be ready before accepting control inputs.
+    if (Object.keys(ACTIVE_GAMES).length !== GAME_VARIANTS) return
     if (newKey === pressedKey) return
     pressedKey = newKey
     seaGame.setPressedKey(pressedKey)

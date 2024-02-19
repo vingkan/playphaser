@@ -58,10 +58,32 @@ export function writeTextOnWorld(
 
 export function interactIfNotStarted(doInteract: Interaction): Interaction {
     let isStarted = false
-    return async (scene: Phaser.Scene) => {
+    return async (scene: InteractiveScene) => {
         if (isStarted) return
         isStarted = true
         await doInteract(scene)
         isStarted = false
     }
+}
+
+export function getRectCells(
+    wx: number,
+    wy: number,
+    cx: number,
+    cy: number,
+    width: number,
+    height: number
+): Cell[] {
+    let cells: Cell[] = []
+    for (let w = 0; w < width; w++) {
+        for (let h = 0; h < height; h++) {
+            cells.push({
+                wx,
+                wy,
+                cx: cx + w,
+                cy: cy + h
+            })
+        }
+    }
+    return cells
 }

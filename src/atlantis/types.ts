@@ -6,14 +6,26 @@ type PhaserSound = (
 
 type PositionDict = { x: number, y: number }
 
-type Interaction = (scene: Phaser.Scene) => Promise<void>
-
 type Cell = {
     wx: number,
     wy: number,
     cx: number,
     cy: number
 }
+
+interface InteractiveScene extends Phaser.Scene {
+    switchText: (seaText: string, sandText: string) => string
+    showText: (text: string, ms: number) => Promise<void>
+    teleportTo: (
+        wx: number,
+        wy: number,
+        x: number,
+        y: number,
+        direction: any
+    ) => Promise<void>
+}
+
+type Interaction = (scene: InteractiveScene) => Promise<void>
 
 type Interactable = {
     cells: Cell[],
