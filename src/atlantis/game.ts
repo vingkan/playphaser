@@ -46,10 +46,10 @@ function GameFactory(variant: string): GameVariant {
                     scale: 3,
                 },
                 start: {
-                    // map: { x: 3, y: 2 },
-                    map: { x: 2, y: 2 },
-                    // position: { x: 10, y: 10 },
-                    position: { x: 1, y: 10 },
+                    map: { x: 3, y: 2 },
+                    // map: { x: 6, y: 2 },
+                    position: { x: 10, y: 10 },
+                    // position: { x: 0, y: 1 },
                     characterLayer: "Collisions",
                 },
                 player: {
